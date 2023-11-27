@@ -3,6 +3,7 @@
 
 include('..\\helpers\\helpers_xxx.js');
 include('..\\helpers\\buttons_xxx.js');
+include('..\\helpers\\buttons_xxx_menu.js');
 include('..\\helpers\\helpers_xxx_file.js');
 include('..\\helpers\\helpers_xxx_file_zip.js');
 include('..\\helpers\\helpers_xxx_input.js');
