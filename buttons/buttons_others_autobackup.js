@@ -1,5 +1,5 @@
 ﻿'use strict';
-//27/11/23
+//28/11/23
 
 include('..\\helpers\\helpers_xxx.js');
 include('..\\helpers\\buttons_xxx.js');
@@ -11,12 +11,11 @@ include('..\\helpers\\menu_xxx.js');
 include('..\\helpers\\menu_xxx_extras.js');
 include('..\\main\\autobackup\\autobackup.js');
 var prefix = 'bak';
-var version = getButtonVersion('Playlist-Tools-SMP');
+var version = '1.0.0';
 
-try {window.DefineScript('Autobackup Button', {author:'regorxxx', version, features: {drag_n_drop: false}});} catch (e) {/* console.log('Main Menu Shortcut Button loaded.'); */} //May be loaded along other buttons
+try {window.DefineScript('Autobackup Button', {author:'regorxxx', version, features: {drag_n_drop: false}});} catch (e) {/* console.log('Autobackup Button loaded.'); */} //May be loaded along other buttons
 
 prefix = getUniquePrefix(prefix, ''); // Puts new ID before '_'
-
 
 var newButtonsProperties = { //You can simply add new properties here
 	iPlaying:		['While playing (every X min, 0 = off)', 60, {func: isInt}, 60],
@@ -62,6 +61,9 @@ var newButtonsProperties = { //You can simply add new properties here
 	],
 	bAsync:			['Aynchronous backup processing', true, {func: isBoolean}, true],
 	active:			['Autobackup activated', true, {func: isBoolean}, true],
+	bIconMode:		['Icon-only mode?', false, {func: isBoolean}, false],
+	bStartActive:	['Always active on startup', true, {func: isBoolean}, true],
+	bHeadlessMode:	['Headless mode', false, {func: isBoolean}, false],
 };
 newButtonsProperties.files.push(newButtonsProperties.files[1]);
 newButtonsProperties.backupFormat.push(newButtonsProperties.backupFormat[1]);
@@ -70,120 +72,177 @@ setProperties(newButtonsProperties, prefix, 0); //This sets all the panel proper
 newButtonsProperties = getPropertiesPairs(newButtonsProperties, prefix, 0);
 buttonsBar.list.push(newButtonsProperties);
 
-{
-	var newButton = {
-		Autobackup: new themedButton({x: 0, y: 0, w: _gr.CalcTextWidth('Autobackup', _gdiFont(globFonts.button.name, globFonts.button.size * buttonsBar.config.scale)) + 25 * _scale(1, false) /_scale(buttonsBar.config.scale), h: 22}, 'Autobackup', function (mask) {
-			if (mask === MK_SHIFT) {
-				const menu = settingsMenu(
-					this, true, ['buttons_others_autobackup.js'],
-					void(0),
-					{
-						'*': (input, key) => {
-							if (this.autoBackup.hasOwnProperty(key)) {
-								const times = ['iPlaying', 'iStop', 'iInterval', 'iStart'];
-								this.autoBackup[key] = times.includes(key) ? input * 60000 : input;
-							}
-						},
-						active: (input) => {
-							this.active = this.autoBackup.active = input;
-						}
+addButton({
+	Autobackup: new themedButton({x: 0, y: 0, w: _gr.CalcTextWidth('Autobackup', _gdiFont(globFonts.button.name, globFonts.button.size * buttonsBar.config.scale)) + 25 * _scale(1, false) /_scale(buttonsBar.config.scale), h: 22}, 'Autobackup', function (mask) {
+		if ((MK_SHIFT & mask) === MK_SHIFT) {
+			this.autoBackup.saveFooConfig();
+			this.autoBackup.backup();
+		} else {
+			// Menu
+			const menu = new _menu();
+			{
+				const menuName = menu.newMenu('Interval settings...');
+				['iPlaying', 'iStop', 'iInterval', 'iStart', 'iTrack'].forEach((key) => {
+					const value = this.buttonsProperties[key][1];
+					const entryText = this.buttonsProperties[key][0].replace(/[a-zA-Z]*[0-9]*_*[0-9]*\./,'') + '\t[' + value + ']';
+					menu.newEntry({menuName, entryText, func: () => {
+						const input = Input.number('int', value, 'Enter ' +  (key === 'iTrack' ? 'tracks' : 'minutes') + ':\n(0 = off)', 'Autobackup', this.buttonsProperties[key][3]);
+						if (input === null) {return;}
+						if (!checkProperty(this.buttonsProperties[key], input)) {return;} // Apply properties check which should be personalized for input value
+						this.buttonsProperties[key][1] = input;
+						overwriteProperties(this.buttonsProperties);
+					}});
+					menu.newCheckMenuLast(() => {return !!this.buttonsProperties[key][1];});
+				});
+			}
+			_createSubMenuEditEntries(menu, void(0), {
+				subMenuName: 'Files and folders to backup...',
+				name: 'Autobackup',
+				list: this.autoBackup.files, 
+				defaults: JSON.parse(this.buttonsProperties.files[3]), 
+				input : () => {
+					const entry = {
+						path: Input.string(
+							'string', '',
+							'Enter folder path relative to profile folder:\n' +
+							'Ex: js_data\\presets'
+							, 'Autobackup' , 'js_data\\presets', void(0), true
+						)
+					};
+					if (!entry.path) {return;}
+					return entry;
+				},
+				bNumbered: true,
+				onBtnUp: (files) => {
+					this.autoBackup.files = files;
+					this.buttonsProperties.files[1] = JSON.stringify(files);
+					overwriteProperties(this.buttonsProperties);
+				}
+			});
+			{
+				const menuName = menu.newMenu('Other settings...');
+				{
+					const value = this.buttonsProperties.outputPath[1];
+					const entryText = this.buttonsProperties.outputPath[0].replace(/[a-zA-Z]*[0-9]*_*[0-9]*\./,'') + '\t[' + value + ']';
+					menu.newEntry({menuName, entryText, func: () => {
+						const input = Input.string('string', value, 'Enter path relative to profile folder:', 'Autobackup',this.buttonsProperties.outputPath[3]);
+						if (input === null) {return;}
+						if (!checkProperty(this.buttonsProperties.outputPath, input)) {return;} // Apply properties check which should be personalized for input value
+						this.buttonsProperties.outputPath[1] = input;
+						overwriteProperties(this.buttonsProperties);
+					}});
+				}
+				_createSubMenuEditEntries(menu, menuName, {
+					subMenuName: 'Backup file formatting...',
+					name: 'Autobackup',
+					list: this.autoBackup.backupFormat, 
+					defaults: JSON.parse(this.buttonsProperties.backupFormat[3]), 
+					input : () => {
+						const entry = {
+							...(Input.json(
+								'object', JSON.stringify({regex: '[\- :,]', flag: 'g', replacer: '_'}),
+								'Enter regex and replacer:\n' +
+								'Ex: ' + JSON.stringify({regex: '[\- :,]', flag: 'g', replacer: '_'})
+								, 'Autobackup' , JSON.stringify({regex: '[\- :,]', flag: 'g', replacer: '_'}), void(0), true
+							) || {})
+						};
+						if (!entry.hasOwnProperty('regex') || !entry.hasOwnProperty('flag') || !entry.hasOwnProperty('replacer')) {return;}
+						try {new RegExp(curr.regex, curr.flag)} catch (e) {return;}
+						return entry;
 					},
-					(menu) => {
-						menu.newEntry({entryText: 'sep'});
-						_createSubMenuEditEntries(menu, void(0), {
-							subMenuName: 'Files and folders to backup...',
-							name: 'Autobackup',
-							list: this.autoBackup.files, 
-							defaults: JSON.parse(this.buttonsProperties.files[3]), 
-							input : () => {
-								const entry = {
-									path: Input.string(
-										'string', '',
-										'Enter folder path relative to profile folder:\n' +
-										'Ex: js_data\\presets'
-										, 'Autobackup' , 'js_data\\presets', void(0), true
-									)
-								};
-								if (!entry.path) {return;}
-								return entry;
-							},
-							bNumbered: true,
-							onBtnUp: (files) => {
-								this.autoBackup.files = files;
-								this.buttonsProperties.files[1] = JSON.stringify(files);
-								overwriteProperties(this.buttonsProperties);
-							}
-						});
-						menu.newEntry({entryText: 'sep'});
-						_createSubMenuEditEntries(menu, void(0), {
-							subMenuName: 'Backup file formatting...',
-							name: 'Autobackup',
-							list: this.autoBackup.backupFormat, 
-							defaults: JSON.parse(this.buttonsProperties.backupFormat[3]), 
-							input : () => {
-								const entry = {
-									...(Input.json(
-										'object', JSON.stringify({regex: '[\- :,]', flag: 'g', replacer: '_'}),
-										'Enter regex and replacer:\n' +
-										'Ex: ' + JSON.stringify({regex: '[\- :,]', flag: 'g', replacer: '_'})
-										, 'Autobackup' , JSON.stringify({regex: '[\- :,]', flag: 'g', replacer: '_'}), void(0), true
-									) || {})
-								};
-								if (!entry.hasOwnProperty('regex') || !entry.hasOwnProperty('flag') || !entry.hasOwnProperty('replacer')) {return;}
-								try {new RegExp(curr.regex, curr.flag)} catch (e) {return;}
-								return entry;
-							},
-							bNumbered: true,
-							onBtnUp: (backupFormat) => {
-								this.autoBackup.backupFormat = backupFormat;
-								this.buttonsProperties.backupFormat[1] = JSON.stringify(backupFormat);
-								overwriteProperties(this.buttonsProperties);
-							}
-						});
+					bNumbered: true,
+					onBtnUp: (backupFormat) => {
+						this.autoBackup.backupFormat = backupFormat;
+						this.buttonsProperties.backupFormat[1] = JSON.stringify(backupFormat);
+						overwriteProperties(this.buttonsProperties);
 					}
-				);
-				menu.btn_up(this.currX, this.currY + this.currH);
-			} else {
-				// Menu
-				const menu = new _menu();
-				menu.newEntry({entryText: 'Backup tools', flags: MF_GRAYED});
-				menu.newEntry({entryText: 'sep'});
-				menu.newEntry({entryText: 'Backup now', func: () => {
-					this.autoBackup.saveFooConfig();
-					this.autoBackup.backup();
-				}});
-				menu.newEntry({entryText: 'sep'});
-				menu.newEntry({entryText: 'Open backup folder...', func: () => {
-					_explorer(fb.ProfilePath + this.autoBackup.outputPath);
-				}});
-				menu.btn_up(this.currX, this.currY + this.currH);
+				});
+				menu.newEntry({menuName, entryText: 'sep'});
+				{
+					const value = this.buttonsProperties.iBackups[1];
+					const entryText = this.buttonsProperties.iBackups[0].replace(/[a-zA-Z]*[0-9]*_*[0-9]*\./,'') + '\t[' + value + ']';
+					menu.newEntry({menuName, entryText, func: () => {
+						const input = Input.number('int', value, 'Enter number' + ':\n(0 = off)', 'Autobackup', this.buttonsProperties.iBackups[3]);
+						if (input === null) {return;}
+						if (!checkProperty(this.buttonsProperties.iBackups, input)) {return;} // Apply properties check which should be personalized for input value
+						this.buttonsProperties.iBackups[1] = input;
+						overwriteProperties(this.buttonsProperties);
+					}});
+				}
+				menu.newEntry({menuName, entryText: 'sep'});
+				['bAsync', 'sep', 'active', 'bStartActive'].forEach((key) => {
+					if (key === 'sep') {menu.newEntry({menuName, entryText: 'sep'}); return;}
+					const entryText = this.buttonsProperties[key][0].replace(/[a-zA-Z]*[0-9]*_*[0-9]*\./,'');
+					menu.newEntry({menuName, entryText, func: () => {
+						this.buttonsProperties[key][1] = !this.buttonsProperties[key][1];
+						overwriteProperties(this.buttonsProperties);
+						if (key === 'active') {this.active = this.autoBackup.active = this.buttonsProperties[key][1];}
+					}});
+					menu.newCheckMenuLast(() => {return this.buttonsProperties[key][1];});
+				});
 			}
-		}, null, void(0), (parent) => {
-			const bShift = utils.IsKeyPressed(VK_SHIFT);
-			const bInfo = typeof menu_panelProperties === 'undefined' || menu_panelProperties.bTooltipInfo[1];
-			let info = 'Autobackup foobar2000 config files:';
-			// Entries
-			const files = parent.autoBackup.files;
-			info += '\nEntries:\t' + [...new Set(files.map(e => e.name.replace(/ \(.*\)/, '')))].joinEvery(', ', 2, '\n\t');
-			if (bShift || bInfo) {
-				info += '\n-----------------------------------------------------';
-				info += '\n(Shift + L. Click to open config menu)';
+			menu.newEntry({entryText: 'sep'});
+			{
+				const entryText = this.buttonsProperties.active[0].replace(/[a-zA-Z]*[0-9]*_*[0-9]*\./,'');
+				menu.newEntry({entryText, func: () => {
+					this.buttonsProperties.active[1] = !this.buttonsProperties.active[1];
+					overwriteProperties(this.buttonsProperties);
+					this.active = this.autoBackup.active = this.buttonsProperties.active[1];
+				}});
+				menu.newCheckMenuLast(() => {return this.buttonsProperties.active[1];});
 			}
-			return info;
-		}, prefix, newButtonsProperties, chars.clock, void(0), {
-			autoBackup: new AutoBackup({
-				n: Number(newButtonsProperties.iBackups[1]),
-				bAsync: newButtonsProperties.bAsync[1],
-				outputPath: newButtonsProperties.outputPath[1],
-				files: JSON.parse(newButtonsProperties.files[1]),
-				backupFormat: JSON.parse(newButtonsProperties.backupFormat[1]),
-				iPlaying: Number(newButtonsProperties.iPlaying[1]) * 60000,
-				iStop: Number(newButtonsProperties.iStop[1]) * 60000,
-				iInterval: Number(newButtonsProperties.iInterval[1]) * 60000,
-				iStart: Number(newButtonsProperties.iStart[1]) * 60000,
-				iTrack: Number(newButtonsProperties.iTrack[1])
-			})
-		}, void(0), function() {this.active = this.autoBackup.active = this.buttonsProperties.active[1];}, {scriptName: 'Autobackup-SMP', version}
-	)};
-	addButton(newButton);
-}
+			menu.newEntry({entryText: 'sep'});
+			menu.newEntry({entryText: 'Execute Save & Backup', func: () => {
+				this.autoBackup.saveFooConfig();
+				this.autoBackup.backup();
+			}});
+			menu.newEntry({entryText: 'sep'});
+			menu.newEntry({entryText: 'Open backup folder...', func: () => {
+				_explorer(fb.ProfilePath + this.autoBackup.outputPath.split('\\').slice(0, -1).join('\\'));
+			}});
+			menu.newEntry({entryText: 'sep'});
+			menu.newEntry({entryText: 'Readme...', func: () => {
+				const readmeList = _isFile(folders.xxx + 'helpers\\readme\\buttons_list.json') ? _jsonParseFileCheck(folders.xxx + 'helpers\\readme\\buttons_list.json', 'Readme list', window.Name, utf8) : null;
+				if (readmeList) {
+					const readmeFile = readmeList.hasOwnProperty('buttons_others_autobackup.js') ? readmeList['buttons_others_autobackup.js'] : '';
+					const readme = readmeFile.length ? _open(folders.xxx + 'helpers\\readme\\' + readmeFile, utf8) : '';
+					if (readme.length) {fb.ShowPopupMessage(readme, readmeFile);}
+					else {console.log(readmeFile + ' not found.');}
+				}
+			}});
+			menu.btn_up(this.currX, this.currY + this.currH);
+		}
+	}, null, void(0), (parent) => {
+		const bShift = utils.IsKeyPressed(VK_SHIFT);
+		const bInfo = typeof menu_panelProperties === 'undefined' || menu_panelProperties.bTooltipInfo[1];
+		let info = 'Autobackup foobar2000 config files:';
+		// Entries
+		const files = parent.autoBackup.files;
+		info += '\nEntries:\t' + [...new Set(files.map(e => e.name.replace(/ \(.*\)/, '')))].joinEvery(', ', 3, '\n\t');
+		if (bShift || bInfo) {
+			info += '\n-----------------------------------------------------';
+			info += '\n(Shift + L. Click to Save && Backup on demand)';
+		}
+		return info;
+	}, prefix, newButtonsProperties, chars.clock, void(0), {
+		autoBackup: new AutoBackup({
+			n: Number(newButtonsProperties.iBackups[1]),
+			bAsync: newButtonsProperties.bAsync[1],
+			outputPath: newButtonsProperties.outputPath[1],
+			files: JSON.parse(newButtonsProperties.files[1]),
+			backupFormat: JSON.parse(newButtonsProperties.backupFormat[1]),
+			iPlaying: Number(newButtonsProperties.iPlaying[1]) * 60000,
+			iStop: Number(newButtonsProperties.iStop[1]) * 60000,
+			iInterval: Number(newButtonsProperties.iInterval[1]) * 60000,
+			iStart: Number(newButtonsProperties.iStart[1]) * 60000,
+			iTrack: Number(newButtonsProperties.iTrack[1])
+		})
+	}, void(0), function() {
+		this.active = this.autoBackup.active = this.buttonsProperties.bStartActive[1] ? true : this.buttonsProperties.active[1];
+		if (this.active !== this.buttonsProperties.active[1]) {
+			this.buttonsProperties.active[1] = this.active;
+			overwriteProperties(this.buttonsProperties);
+		}
+		this.bHeadlessMode = this.buttonsProperties.bHeadlessMode[1];
+	}, {scriptName: 'Autobackup-SMP', version})
+});
