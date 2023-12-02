@@ -257,6 +257,5 @@ addButton({
 			overwriteProperties(this.buttonsProperties);
 		}
 		this.bHeadlessMode = this.buttonsProperties.bHeadlessMode[1];
-		this.autoBackup.backup()
 	}, {scriptName: 'Autobackup-SMP', version})
 });
