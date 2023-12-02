@@ -4,8 +4,6 @@
 include('..\\helpers\\helpers_xxx.js');
 include('..\\helpers\\buttons_xxx.js');
 include('..\\helpers\\buttons_xxx_menu.js');
-include('..\\helpers\\helpers_xxx_file.js');
-include('..\\helpers\\helpers_xxx_file_zip.js');
 include('..\\helpers\\helpers_xxx_input.js');
 include('..\\helpers\\menu_xxx.js');
 include('..\\helpers\\menu_xxx_extras.js');
@@ -64,6 +62,7 @@ var newButtonsProperties = { //You can simply add new properties here
 	bIconMode:		['Icon-only mode?', false, {func: isBoolean}, false],
 	bStartActive:	['Always active on startup', true, {func: isBoolean}, true],
 	bHeadlessMode:	['Headless mode', false, {func: isBoolean}, false],
+	backupsMaxSize:	['Max size of backup files', 2000, {func: isInt}, 2000],
 };
 newButtonsProperties.files.push(newButtonsProperties.files[1]);
 newButtonsProperties.backupFormat.push(newButtonsProperties.backupFormat[1]);
@@ -170,6 +169,18 @@ addButton({
 						overwriteProperties(this.buttonsProperties);
 					}});
 				}
+				{
+					const value = this.buttonsProperties.backupsMaxSize[1];
+					const entryText = this.buttonsProperties.backupsMaxSize[0].replace(/[a-zA-Z]*[0-9]*_*[0-9]*\./,'') + '\t[' + value + ' MB]';
+					menu.newEntry({menuName, entryText, func: () => {
+						const input = Input.number('int', value, 'Enter MB' + ':\n(0 = off)', 'Autobackup', this.buttonsProperties.backupsMaxSize[3]);
+						if (input === null) {return;}
+						if (!checkProperty(this.buttonsProperties.backupsMaxSize, input)) {return;} // Apply properties check which should be personalized for input value
+						this.buttonsProperties.backupsMaxSize[1] = input;
+						this.autoBackup.backupsMaxSize = input * 1024 * 1024;
+						overwriteProperties(this.buttonsProperties);
+					}});
+				}
 				menu.newEntry({menuName, entryText: 'sep'});
 				['bAsync', 'sep', 'active', 'bStartActive'].forEach((key) => {
 					if (key === 'sep') {menu.newEntry({menuName, entryText: 'sep'}); return;}
@@ -227,7 +238,8 @@ addButton({
 		return info;
 	}, prefix, newButtonsProperties, chars.clock, void(0), {
 		autoBackup: new AutoBackup({
-			n: Number(newButtonsProperties.iBackups[1]),
+			iBackups: Number(newButtonsProperties.iBackups[1]),
+			backupsMaxSize: Number(newButtonsProperties.backupsMaxSize[1]) * 1024 * 1024,
 			bAsync: newButtonsProperties.bAsync[1],
 			outputPath: newButtonsProperties.outputPath[1],
 			files: JSON.parse(newButtonsProperties.files[1]),
@@ -245,5 +257,6 @@ addButton({
 			overwriteProperties(this.buttonsProperties);
 		}
 		this.bHeadlessMode = this.buttonsProperties.bHeadlessMode[1];
+		this.autoBackup.backup()
 	}, {scriptName: 'Autobackup-SMP', version})
 });

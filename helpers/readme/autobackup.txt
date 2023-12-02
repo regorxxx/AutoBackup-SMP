@@ -68,6 +68,8 @@ Appendend to the name, a date string will be added like
 There are some settings to further tweak that string with RegEx
 (or even remove it).
 
+The number of backups kept can be set by number of files or
+total file size.
 
 Headless mode:
 ------------------------

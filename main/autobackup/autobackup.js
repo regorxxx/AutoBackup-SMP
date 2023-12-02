@@ -1,7 +1,20 @@
 'use strict';
 //02/12/23
 
-function AutoBackup({iBackups = 8, bAsync = true, iPlaying = 60 * 60 * 1000, iStop = 60 * 60 * 1000, iInterval = 10 * 60 * 1000, iStart = 10 * 60 * 1000, iTrack = 0, outputPath, files, backupFormat} = {}) {
+include('..\\..\\helpers\\helpers_xxx_file.js');
+include('..\\..\\helpers\\helpers_xxx_file_zip.js');
+
+function AutoBackup({
+		iBackups = 8, 
+		backupsMaxSize = 1024 * 1024 * 2000,
+		bAsync = true, 
+		iPlaying = 60 * 60 * 1000, 
+		iStop = 60 * 60 * 1000, 
+		iInterval = 10 * 60 * 1000, 
+		iStart = 10 * 60 * 1000,
+		iTrack = 0, 
+		outputPath, files, backupFormat
+	} = {}) {
 	this.addEventListeners = () => {
 		this.listeners = [
 			addEventListener('on_playback_new_track', (handle) => {
@@ -46,13 +59,25 @@ function AutoBackup({iBackups = 8, bAsync = true, iPlaying = 60 * 60 * 1000, iSt
 		try {fb.RunMainMenuCommand('Save configuration')} catch (e) {console.log(e);}
 	};
 	
-	this.backup = ({iBackups = this.iBackups, bAsync = this.bAsync, outputPath = this.outputPath, reason = ''} = {}) => {
+	this.backup = ({iBackups = this.iBackups, backupsMaxSize = this.backupsMaxSize, bAsync = this.bAsync, outputPath = this.outputPath, reason = ''} = {}) => {
 		let test = !bAsync ? new FbProfiler('Autobackup') : null;
-		const folderPath = fb.ProfilePath + outputPath.split('\\').slice(0, -1).join('\\') || '';
+		const folderPath = fb.ProfilePath + outputPath.split('\\').slice(0, -1).join('\\') + '\\' || '';
 		_createFolder(folderPath);
 		if (iBackups && iBackups > -1) {
-			const files = getFiles(folderPath, new Set(['.zip'])).reverse();
+			const files = getFiles(folderPath, new Set(['.zip']))
+				.filter((file) => file.startsWith(fb.ProfilePath + outputPath))
+				.reverse();
 			while (files.length >= iBackups) {
+				_recycleFile(files.pop(), true);
+			}
+		}
+		if (backupsMaxSize && backupsMaxSize > -1) {
+			const files = getFiles(folderPath, new Set(['.zip']))
+				.filter((file) => file.startsWith(fb.ProfilePath + outputPath))
+				.reverse();
+			const fileSizes = files.map((file) => utils.GetFileSize(file));
+			while (fileSizes.reduce((acc, curr) => acc + curr, 0) >= backupsMaxSize) {
+				fileSizes.pop();
 				_recycleFile(files.pop(), true);
 			}
 		}
@@ -105,6 +130,7 @@ function AutoBackup({iBackups = 8, bAsync = true, iPlaying = 60 * 60 * 1000, iSt
 	this.active = true;
 	// Vars
 	this.iBackups = iBackups;
+	this.backupsMaxSize = backupsMaxSize;
 	this.bAsync = bAsync;
 	this.outputPath = outputPath;
 	this.files = files;
