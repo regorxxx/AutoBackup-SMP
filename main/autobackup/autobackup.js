@@ -103,7 +103,7 @@ function AutoBackup({
 			} else if (this.iStop && this.timePaused && (now - this.timePaused) >= this.iStop) {
 				this.backup({reason: 'paused'});
 				this.lastBackup = now
-				this.timePaused = this.timePaused + this.iStop;
+				this.timePaused = 0;
 			} else if (this.iTrack && this.timePlaying && playedTracks >= this.iTrack) {
 				this.backup({reason: 'tracks'});
 				this.lastBackup = now;
