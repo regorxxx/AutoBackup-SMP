@@ -63,34 +63,34 @@ function AutoBackup({iBackups = 8, bAsync = true, iPlaying = 60 * 60 * 1000, iSt
 			new Date().toISOString().split('.')[0]
 		);
 		_zip(fileMask, fb.ProfilePath + outputPath + zipName + '.zip', bAsync, fb.ProfilePath);
-		console.log('Autobackup-SMP: Backed up items to ' + outputPath + zipName);
+		console.log('Autobackup-SMP (' + reason + '): Backed up items to ' + outputPath + zipName);
 		if (!bAsync) {test.Print(reason);}
 		return true;
 	};
 	this.backupDebounced = () => {
 		if (!this.active) {return false;}
 		const now = Date.now();
-		if (this.iPlaying && this.timePlaying && (now - this.timePlaying) >= this.iPlaying) {
-			this.backup({reason: 'playing'});
-			this.lastBackup = now;
-			this.timePlaying = this.timePlaying + this.iPlaying;
-		} else if (this.iStop && this.timePaused && (now - this.timePaused) >= this.iStop) {
-			this.backup({reason: 'paused'});
-			this.lastBackup = now
-			this.timePaused = this.timePaused + this.iStop;
-		} else if (this.iTrack && this.timePlaying && playedTracks >= this.iTrack) {
-			if ((now - this.lastBackup) >= 30000) {
+		if ((now - this.lastBackup) >= 30000) {
+			if (this.iPlaying && this.timePlaying && (now - this.timePlaying) >= this.iPlaying) {
+				this.backup({reason: 'playing'});
+				this.lastBackup = now;
+				this.timePlaying = this.timePlaying + this.iPlaying;
+			} else if (this.iStop && this.timePaused && (now - this.timePaused) >= this.iStop) {
+				this.backup({reason: 'paused'});
+				this.lastBackup = now
+				this.timePaused = this.timePaused + this.iStop;
+			} else if (this.iTrack && this.timePlaying && playedTracks >= this.iTrack) {
 				this.backup({reason: 'tracks'});
 				this.lastBackup = now;
 				this.playedTracks -= this.iTrack;
+			} else if (this.iStart && this.timeInit && (now - this.timeInit) >= this.iStart) {
+				this.backup({reason: 'startup'});
+				this.lastBackup = now;
+				this.timeInit = 0;
+			} else if (this.iInterval && this.lastBackup && (now - this.lastBackup) >= this.iInterval) {
+				this.backup({reason: 'interval'});
+				this.lastBackup = now
 			}
-		} else if (this.iStart && this.timeInit && (now - this.timeInit) >= this.iStart) {
-			this.backup({reason: 'startup'});
-			this.lastBackup = now;
-			this.timeInit = 0;
-		} else if (this.iInterval && this.lastBackup && (now - this.lastBackup) >= this.iInterval) {
-			this.backup({reason: 'interval'});
-			this.lastBackup = now
 		}
 		return this.lastBackup === now;
 	}

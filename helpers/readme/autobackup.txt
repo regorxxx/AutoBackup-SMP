@@ -34,11 +34,12 @@ Rules: (times in min)
 	Each time a track ends (it has played all the way through
 	or another has been started manually, except when shutting
 	down), a counter is incremented. When it exceeds this value,
-	configuration is saved. Note that saving this way more often
-	than 30 seconds since last autosave is blocked to avoid lock
-	up or crash problems when going through a playlist too fast
-	(e.g. on very short files or invalid entries). 
-
+	configuration is saved. Note that saving too often is 
+	blocked to avoid problems when going through a playlist too
+	fast (e.g. on very short files or invalid entries). 
+- Saving by any rule more often than 30 seconds since last 
+	autosave is blocked to avoid lockup or crash problems.
+	
 Files and folders:
 ------------------------
 Items to store to the backup archive. Those which are not found are
