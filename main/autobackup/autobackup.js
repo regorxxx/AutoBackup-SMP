@@ -1,5 +1,5 @@
 'use strict';
-//27/11/23
+//02/12/23
 
 function AutoBackup({iBackups = 8, bAsync = true, iPlaying = 60 * 60 * 1000, iStop = 60 * 60 * 1000, iInterval = 10 * 60 * 1000, iStart = 10 * 60 * 1000, iTrack = 0, outputPath, files, backupFormat} = {}) {
 	this.addEventListeners = () => {
@@ -46,7 +46,7 @@ function AutoBackup({iBackups = 8, bAsync = true, iPlaying = 60 * 60 * 1000, iSt
 		try {fb.RunMainMenuCommand('Save configuration')} catch (e) {console.log(e);}
 	};
 	
-	this.backup = ({iBackups = this.iBackups, bAsync = this.bAsync, outputPath = this.outputPath} = {}) => {
+	this.backup = ({iBackups = this.iBackups, bAsync = this.bAsync, outputPath = this.outputPath, reason = ''} = {}) => {
 		let test = !bAsync ? new FbProfiler('Autobackup') : null;
 		const folderPath = fb.ProfilePath + outputPath.split('\\').slice(0, -1).join('\\') || '';
 		_createFolder(folderPath);
@@ -64,32 +64,32 @@ function AutoBackup({iBackups = 8, bAsync = true, iPlaying = 60 * 60 * 1000, iSt
 		);
 		_zip(fileMask, fb.ProfilePath + outputPath + zipName + '.zip', bAsync, fb.ProfilePath);
 		console.log('Autobackup-SMP: Backed up items to ' + outputPath + zipName);
-		if (!bAsync) {test.Print();}
+		if (!bAsync) {test.Print(reason);}
 		return true;
 	};
 	this.backupDebounced = () => {
 		if (!this.active) {return false;}
 		const now = Date.now();
 		if (this.iPlaying && this.timePlaying && (now - this.timePlaying) >= this.iPlaying) {
-			this.backup();
+			this.backup({reason: 'playing'});
 			this.lastBackup = now;
-			this.timePlaying = now - (this.timePlaying - this.iPlaying);
+			this.timePlaying = this.timePlaying + this.iPlaying;
 		} else if (this.iStop && this.timePaused && (now - this.timePaused) >= this.iStop) {
-			this.backup();
+			this.backup({reason: 'paused'});
 			this.lastBackup = now
-			this.timePaused = now - (this.timePaused - this.iStop);
+			this.timePaused = this.timePaused + this.iStop;
 		} else if (this.iTrack && this.timePlaying && playedTracks >= this.iTrack) {
 			if ((now - this.lastBackup) >= 30000) {
-				this.backup();
+				this.backup({reason: 'tracks'});
 				this.lastBackup = now;
 				this.playedTracks -= this.iTrack;
 			}
 		} else if (this.iStart && this.timeInit && (now - this.timeInit) >= this.iStart) {
-			this.backup();
+			this.backup({reason: 'startup'});
 			this.lastBackup = now;
 			this.timeInit = 0;
 		} else if (this.iInterval && this.lastBackup && (now - this.lastBackup) >= this.iInterval) {
-			this.backup();
+			this.backup({reason: 'interval'});
 			this.lastBackup = now
 		}
 		return this.lastBackup === now;
