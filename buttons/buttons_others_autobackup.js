@@ -1,5 +1,5 @@
 ﻿'use strict';
-//28/11/23
+//02/12/23
 
 include('..\\helpers\\helpers_xxx.js');
 include('..\\helpers\\buttons_xxx.js');
@@ -90,6 +90,7 @@ addButton({
 						if (input === null) {return;}
 						if (!checkProperty(this.buttonsProperties[key], input)) {return;} // Apply properties check which should be personalized for input value
 						this.buttonsProperties[key][1] = input;
+						this.autoBackup[key] = input * 60 * 1000;
 						overwriteProperties(this.buttonsProperties);
 					}});
 					menu.newCheckMenuLast(() => {return !!this.buttonsProperties[key][1];});
