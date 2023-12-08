@@ -11,7 +11,7 @@ include('..\\main\\autobackup\\autobackup.js');
 var prefix = 'bak';
 var version = '1.0.0';
 
-try {window.DefineScript('Autobackup Button', {author:'regorxxx', version, features: {drag_n_drop: false}});} catch (e) {/* console.log('Autobackup Button loaded.'); */} //May be loaded along other buttons
+try {window.DefineScript('AutoBackup Button', {author:'regorxxx', version, features: {drag_n_drop: false}});} catch (e) {/* console.log('AutoBackup Button loaded.'); */} //May be loaded along other buttons
 
 prefix = getUniquePrefix(prefix, ''); // Puts new ID before '_'
 
@@ -58,7 +58,7 @@ var newButtonsProperties = { //You can simply add new properties here
 		]), {func: isJSON}
 	],
 	bAsync:			['Aynchronous backup processing', true, {func: isBoolean}, true],
-	active:			['Autobackup activated', true, {func: isBoolean}, true],
+	active:			['AutoBackup activated', true, {func: isBoolean}, true],
 	bIconMode:		['Icon-only mode?', false, {func: isBoolean}, false],
 	bStartActive:	['Always active on startup', true, {func: isBoolean}, true],
 	bHeadlessMode:	['Headless mode', false, {func: isBoolean}, false],
@@ -72,7 +72,7 @@ newButtonsProperties = getPropertiesPairs(newButtonsProperties, prefix, 0);
 buttonsBar.list.push(newButtonsProperties);
 
 addButton({
-	Autobackup: new themedButton({x: 0, y: 0, w: _gr.CalcTextWidth('Autobackup', _gdiFont(globFonts.button.name, globFonts.button.size * buttonsBar.config.scale)) + 25 * _scale(1, false) /_scale(buttonsBar.config.scale), h: 22}, 'Autobackup', function (mask) {
+	AutoBackup: new themedButton({x: 0, y: 0, w: _gr.CalcTextWidth('AutoBackup', _gdiFont(globFonts.button.name, globFonts.button.size * buttonsBar.config.scale)) + 25 * _scale(1, false) /_scale(buttonsBar.config.scale), h: 22}, 'AutoBackup', function (mask) {
 		if ((MK_SHIFT & mask) === MK_SHIFT) {
 			this.autoBackup.saveFooConfig();
 			this.autoBackup.backup();
@@ -90,7 +90,7 @@ addButton({
 					const value = this.buttonsProperties[key][1];
 					const entryText = this.buttonsProperties[key][0].replace(/[a-zA-Z]*[0-9]*_*[0-9]*\./,'') + '\t[' + value + ']';
 					menu.newEntry({menuName, entryText, func: () => {
-						const input = Input.number('int', value, 'Enter ' +  (key === 'iTrack' ? 'tracks' : 'minutes') + ':\n(0 = off)', 'Autobackup', this.buttonsProperties[key][3]);
+						const input = Input.number('int', value, 'Enter ' +  (key === 'iTrack' ? 'tracks' : 'minutes') + ':\n(0 = off)', 'AutoBackup', this.buttonsProperties[key][3]);
 						if (input === null) {return;}
 						if (!checkProperty(this.buttonsProperties[key], input)) {return;} // Apply properties check which should be personalized for input value
 						this.buttonsProperties[key][1] = input;
@@ -102,7 +102,7 @@ addButton({
 			}
 			_createSubMenuEditEntries(menu, void(0), {
 				subMenuName: 'Files and folders to backup...',
-				name: 'Autobackup',
+				name: 'AutoBackup',
 				list: this.autoBackup.files, 
 				defaults: JSON.parse(this.buttonsProperties.files[3]), 
 				input : () => {
@@ -111,7 +111,7 @@ addButton({
 							'string', '',
 							'Enter folder path relative to profile folder:\n' +
 							'Ex: js_data\\presets'
-							, 'Autobackup' , 'js_data\\presets', void(0), true
+							, 'AutoBackup' , 'js_data\\presets', void(0), true
 						)
 					};
 					if (!entry.path) {return;}
@@ -130,7 +130,7 @@ addButton({
 					const value = this.buttonsProperties.outputPath[1];
 					const entryText = this.buttonsProperties.outputPath[0].replace(/[a-zA-Z]*[0-9]*_*[0-9]*\./,'') + '\t[' + value + ']';
 					menu.newEntry({menuName, entryText, func: () => {
-						const input = Input.string('string', value, 'Enter path relative to profile folder:', 'Autobackup',this.buttonsProperties.outputPath[3]);
+						const input = Input.string('string', value, 'Enter path relative to profile folder:', 'AutoBackup',this.buttonsProperties.outputPath[3]);
 						if (input === null) {return;}
 						if (!checkProperty(this.buttonsProperties.outputPath, input)) {return;} // Apply properties check which should be personalized for input value
 						this.buttonsProperties.outputPath[1] = input;
@@ -139,7 +139,7 @@ addButton({
 				}
 				_createSubMenuEditEntries(menu, menuName, {
 					subMenuName: 'Backup file formatting...',
-					name: 'Autobackup',
+					name: 'AutoBackup',
 					list: this.autoBackup.backupFormat, 
 					defaults: JSON.parse(this.buttonsProperties.backupFormat[3]), 
 					input : () => {
@@ -148,7 +148,7 @@ addButton({
 								'object', JSON.stringify({regex: '[\- :,]', flag: 'g', replacer: '_'}),
 								'Enter regex and replacer:\n' +
 								'Ex: ' + JSON.stringify({regex: '[\- :,]', flag: 'g', replacer: '_'})
-								, 'Autobackup' , JSON.stringify({regex: '[\- :,]', flag: 'g', replacer: '_'}), void(0), true
+								, 'AutoBackup' , JSON.stringify({regex: '[\- :,]', flag: 'g', replacer: '_'}), void(0), true
 							) || {})
 						};
 						if (!entry.hasOwnProperty('regex') || !entry.hasOwnProperty('flag') || !entry.hasOwnProperty('replacer')) {return;}
@@ -167,7 +167,7 @@ addButton({
 					const value = this.buttonsProperties.iBackups[1];
 					const entryText = this.buttonsProperties.iBackups[0].replace(/[a-zA-Z]*[0-9]*_*[0-9]*\./,'') + '\t[' + value + ']';
 					menu.newEntry({menuName, entryText, func: () => {
-						const input = Input.number('int', value, 'Enter number' + ':\n(0 = off)', 'Autobackup', this.buttonsProperties.iBackups[3]);
+						const input = Input.number('int', value, 'Enter number' + ':\n(0 = off)', 'AutoBackup', this.buttonsProperties.iBackups[3]);
 						if (input === null) {return;}
 						if (!checkProperty(this.buttonsProperties.iBackups, input)) {return;} // Apply properties check which should be personalized for input value
 						this.buttonsProperties.iBackups[1] = input;
@@ -178,7 +178,7 @@ addButton({
 					const value = this.buttonsProperties.backupsMaxSize[1];
 					const entryText = this.buttonsProperties.backupsMaxSize[0].replace(/[a-zA-Z]*[0-9]*_*[0-9]*\./,'') + '\t[' + value + ' MB]';
 					menu.newEntry({menuName, entryText, func: () => {
-						const input = Input.number('int', value, 'Enter MB' + ':\n(0 = off)', 'Autobackup', this.buttonsProperties.backupsMaxSize[3]);
+						const input = Input.number('int', value, 'Enter MB' + ':\n(0 = off)', 'AutoBackup', this.buttonsProperties.backupsMaxSize[3]);
 						if (input === null) {return;}
 						if (!checkProperty(this.buttonsProperties.backupsMaxSize, input)) {return;} // Apply properties check which should be personalized for input value
 						this.buttonsProperties.backupsMaxSize[1] = input;
@@ -232,7 +232,7 @@ addButton({
 	}, null, void(0), (parent) => {
 		const bShift = utils.IsKeyPressed(VK_SHIFT);
 		const bInfo = typeof menu_panelProperties === 'undefined' || menu_panelProperties.bTooltipInfo[1];
-		let info = 'Autobackup foobar2000 config files:';
+		let info = 'AutoBackup foobar2000 config files:';
 		// Entries
 		const files = parent.autoBackup.files;
 		info += '\nEntries:\t' + [...new Set(files.map(e => e.name.replace(/ \(.*\)/, '')))].joinEvery(', ', 3, '\n\t');
@@ -262,5 +262,5 @@ addButton({
 			overwriteProperties(this.buttonsProperties);
 		}
 		this.bHeadlessMode = this.buttonsProperties.bHeadlessMode[1];
-	}, {scriptName: 'Autobackup-SMP', version})
+	}, {scriptName: 'AutoBackup-SMP', version})
 });
