@@ -1,5 +1,5 @@
 'use strict';
-//02/12/23
+//08/12/23
 
 include('..\\..\\helpers\\helpers_xxx_file.js');
 include('..\\..\\helpers\\helpers_xxx_file_zip.js');
@@ -60,7 +60,7 @@ function AutoBackup({
 	};
 	
 	this.backup = ({iBackups = this.iBackups, backupsMaxSize = this.backupsMaxSize, bAsync = this.bAsync, outputPath = this.outputPath, reason = ''} = {}) => {
-		let test = !bAsync ? new FbProfiler('Autobackup') : null;
+		let test = !bAsync ? new FbProfiler('AutoBackup') : null;
 		const folderPath = fb.ProfilePath + outputPath.split('\\').slice(0, -1).join('\\') + '\\' || '';
 		_createFolder(folderPath);
 		if (iBackups && iBackups > -1) {
@@ -88,7 +88,7 @@ function AutoBackup({
 			new Date().toISOString().split('.')[0]
 		);
 		_zip(fileMask, fb.ProfilePath + outputPath + zipName + '.zip', bAsync, fb.ProfilePath);
-		console.log('Autobackup-SMP (' + reason + '): Backed up items to ' + outputPath + zipName);
+		console.log(this.name + ' (' + reason + '): Backed up items to ' + outputPath + zipName);
 		if (!bAsync) {test.Print(reason);}
 		return true;
 	};
@@ -128,6 +128,7 @@ function AutoBackup({
 	this.id = null;
 	this.listeners = [];
 	this.active = true;
+	this.name = 'AutoBackup-SMP';
 	// Vars
 	this.iBackups = iBackups;
 	this.backupsMaxSize = backupsMaxSize;
