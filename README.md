@@ -6,13 +6,13 @@
 
 A [Spider Monkey Panel](https://theqwertiest.github.io/foo_spider_monkey_panel) Script, for [foobar2000](https://www.foobar2000.org), which allows periodic automatic saving of configuration and other data in foobar2000 and keeping backup copies of such data. Replacement of [foo_jesus](https://www.foobar2000.org/components/view/foo_jesus).
 
-IMAGE
+![auto](https://github.com/regorxxx/Autobackup-SMP/assets/83307074/866db10b-2250-4559-be9d-b15b7dbda10f)
 
 ## Features
 * Saves configuration ("File\Save Configuration"):
-  * Whole configuration subfolder.,
-  * Media library database (database.*)
-  * Playlists
+  * Whole configuration subfolder.
+  * Media library database (database.*).
+  * Playlists.
   * Additional data managed by other components (for example current theme or playback statistics).
 * After saving, a backup of the changed files is created, as a ZIP archive (using 7zip).
 * Rules to periodically save and backup can be set:
@@ -23,8 +23,10 @@ IMAGE
   * Every X tracks (0 = off).
 * Files and folders to backup can be set by name and mask (for example 'js_data\\playlistManager_*').
 * Output Zip archive path and name is configurable.
+* Backups to keep can be set by number and/or total file size.
+* Headless mode: tool button may be invisible but working on background.
 
-IMAGE
+![auto2](https://github.com/regorxxx/Autobackup-SMP/assets/83307074/8b5e85e2-7f91-4b30-bf34-5f9764c97f4c)
 
 ### Compatible with (toolbar)
  1. [Search-by-Distance-SMP](https://github.com/regorxxx/Search-by-Distance-SMP): creates intelligent "spotify-like" playlist using high-level data from tracks and computing their similarity using genres/styles.
