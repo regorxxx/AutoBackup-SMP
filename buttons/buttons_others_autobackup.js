@@ -1,5 +1,5 @@
 ﻿'use strict';
-//02/12/23
+//08/12/23
 
 include('..\\helpers\\helpers_xxx.js');
 include('..\\helpers\\buttons_xxx.js');
@@ -78,7 +78,12 @@ addButton({
 			this.autoBackup.backup();
 		} else {
 			// Menu
-			const menu = new _menu();
+			clearTimeout(buttonsBar.hidden.id);
+			const menu = new _menu({
+				onBtnUp: () => { // Don't hide button while using menu
+					buttonsBar.hidden.id = setTimeout(on_mouse_mbtn_up, buttonsBar.config.hiddenTimeout);
+				}
+			});
 			{
 				const menuName = menu.newMenu('Interval settings...');
 				['iPlaying', 'iStop', 'iInterval', 'iStart', 'iTrack'].forEach((key) => {
