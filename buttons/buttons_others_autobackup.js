@@ -1,5 +1,5 @@
 ﻿'use strict';
-//08/12/23
+//09/12/23
 
 include('..\\helpers\\helpers_xxx.js');
 include('..\\helpers\\buttons_xxx.js');
@@ -21,6 +21,7 @@ var newButtonsProperties = { //You can simply add new properties here
 	iInterval:		['Always, since last autosave (every X min, 0 = off)', 30, {func: isInt}, 30],
 	iStart:			['On startup (after X min, 0 = off)', 1, {func: isInt}, 1],
 	iTrack:			['Every X tracks (0 = off)', 0, {func: isInt}, 0],
+	iClose:			['On Foobar2000 exit (after X secs, 0 = off)', 20, {func: isInt}, 20],
 	files:			['Files and Folders mask', 
 		JSON.stringify([
 			// Foobar folders
@@ -74,8 +75,7 @@ buttonsBar.list.push(newButtonsProperties);
 addButton({
 	AutoBackup: new themedButton({x: 0, y: 0, w: _gr.CalcTextWidth('AutoBackup', _gdiFont(globFonts.button.name, globFonts.button.size * buttonsBar.config.scale)) + 25 * _scale(1, false) /_scale(buttonsBar.config.scale), h: 22}, 'AutoBackup', function (mask) {
 		if ((MK_SHIFT & mask) === MK_SHIFT) {
-			this.autoBackup.saveFooConfig();
-			this.autoBackup.backup();
+			this.autoBackup.forceBackup();
 		} else {
 			// Menu
 			clearTimeout(buttonsBar.hidden.id);
@@ -86,15 +86,20 @@ addButton({
 			});
 			{
 				const menuName = menu.newMenu('Interval settings...');
-				['iPlaying', 'iStop', 'iInterval', 'iStart', 'iTrack'].forEach((key) => {
+				['iPlaying', 'iStop', 'iInterval', 'iStart', 'iTrack', 'iClose'].forEach((key) => {
 					const value = this.buttonsProperties[key][1];
 					const entryText = this.buttonsProperties[key][0].replace(/[a-zA-Z]*[0-9]*_*[0-9]*\./,'') + '\t[' + value + ']';
+					const unit = key === 'iTrack' 
+						? 'tracks' 
+						: key === 'iClose'
+							? 'seconds'
+							: 'minutes';
 					menu.newEntry({menuName, entryText, func: () => {
-						const input = Input.number('int', value, 'Enter ' +  (key === 'iTrack' ? 'tracks' : 'minutes') + ':\n(0 = off)', 'AutoBackup', this.buttonsProperties[key][3]);
+						const input = Input.number('int', value, 'Enter ' +  unit + ':\n(0 = off)', 'AutoBackup', this.buttonsProperties[key][3]);
 						if (input === null) {return;}
 						if (!checkProperty(this.buttonsProperties[key], input)) {return;} // Apply properties check which should be personalized for input value
 						this.buttonsProperties[key][1] = input;
-						this.autoBackup[key] = input * 60 * 1000;
+						this.autoBackup[key] = unit === 'minutes' ? input * 60 * 1000 : input;
 						overwriteProperties(this.buttonsProperties);
 					}});
 					menu.newCheckMenuLast(() => {return !!this.buttonsProperties[key][1];});
@@ -209,10 +214,7 @@ addButton({
 				menu.newCheckMenuLast(() => {return this.buttonsProperties.active[1];});
 			}
 			menu.newEntry({entryText: 'sep'});
-			menu.newEntry({entryText: 'Execute Save & Backup', func: () => {
-				this.autoBackup.saveFooConfig();
-				this.autoBackup.backup();
-			}});
+			menu.newEntry({entryText: 'Execute Save & Backup', func: this.autoBackup.forceBackup});
 			menu.newEntry({entryText: 'sep'});
 			menu.newEntry({entryText: 'Open backup folder...', func: () => {
 				_explorer(fb.ProfilePath + this.autoBackup.outputPath.split('\\').slice(0, -1).join('\\'));
@@ -253,7 +255,8 @@ addButton({
 			iStop: Number(newButtonsProperties.iStop[1]) * 60000,
 			iInterval: Number(newButtonsProperties.iInterval[1]) * 60000,
 			iStart: Number(newButtonsProperties.iStart[1]) * 60000,
-			iTrack: Number(newButtonsProperties.iTrack[1])
+			iTrack: Number(newButtonsProperties.iTrack[1]),
+			iClose: Number(newButtonsProperties.iClose[1])
 		})
 	}, void(0), function() {
 		this.active = this.autoBackup.active = this.buttonsProperties.bStartActive[1] ? true : this.buttonsProperties.active[1];
