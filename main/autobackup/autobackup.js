@@ -1,5 +1,5 @@
 'use strict';
-//08/12/23
+//09/12/23
 
 include('..\\..\\helpers\\helpers_xxx_file.js');
 include('..\\..\\helpers\\helpers_xxx_file_zip.js');
@@ -8,11 +8,12 @@ function AutoBackup({
 		iBackups = 8, 
 		backupsMaxSize = 1024 * 1024 * 2000,
 		bAsync = true, 
-		iPlaying = 60 * 60 * 1000, 
-		iStop = 60 * 60 * 1000, 
-		iInterval = 10 * 60 * 1000, 
+		iPlaying = 60 * 60 * 1000,
+		iStop = 60 * 60 * 1000,
+		iInterval = 10 * 60 * 1000,
 		iStart = 10 * 60 * 1000,
-		iTrack = 0, 
+		iTrack = 0,
+		iClose = 20,
 		outputPath, files, backupFormat
 	} = {}) {
 	this.addEventListeners = () => {
@@ -35,6 +36,9 @@ function AutoBackup({
 					if (this.timePlaying) {this.timePlaying = Date.now() - (this.timePaused - this.timePlaying);}
 					this.timePaused = 0;
 				}
+			}),	
+			addEventListener('on_script_unload', () => {
+				if (this.active && this.iClose) {this.backup({reason: 'unload', bAsync: true, timeout: this.iClose});}
 			}),
 		]
 	};
@@ -56,10 +60,12 @@ function AutoBackup({
 	}
 	
 	this.saveFooConfig = () => {
-		try {fb.RunMainMenuCommand('Save configuration')} catch (e) {console.log(e);}
+		try {fb.RunMainMenuCommand('Save configuration')} catch (e) {console.log(e); return false;}
+		return true;
 	};
 	
-	this.backup = ({iBackups = this.iBackups, backupsMaxSize = this.backupsMaxSize, bAsync = this.bAsync, outputPath = this.outputPath, reason = ''} = {}) => {
+	this.backup = ({iBackups = this.iBackups, backupsMaxSize = this.backupsMaxSize, bAsync = this.bAsync, outputPath = this.outputPath, reason = '', timeout = 0} = {}) => {
+		if (timeout) {bAsync = true;}
 		let test = !bAsync ? new FbProfiler('AutoBackup') : null;
 		const folderPath = fb.ProfilePath + outputPath.split('\\').slice(0, -1).join('\\') + '\\' || '';
 		_createFolder(folderPath);
@@ -87,37 +93,49 @@ function AutoBackup({
 			(acc, curr) => acc.replace(new RegExp(curr.regex, curr.flag), curr.replacer),
 			new Date().toISOString().split('.')[0]
 		);
-		_zip(fileMask, fb.ProfilePath + outputPath + zipName + '.zip', bAsync, fb.ProfilePath);
-		console.log(this.name + ' (' + reason + '): Backed up items to ' + outputPath + zipName);
+		_zip(fileMask, fb.ProfilePath + outputPath + zipName + '.zip', bAsync, fb.ProfilePath, timeout);
+		if (timeout) {
+			console.log(this.name + ' (' + reason + '): Scheduled backup of items on ' + timeout + ' seconds to ' + outputPath + zipName);
+		} else {
+			console.log(this.name + ' (' + reason + '): Backed up items to ' + outputPath + zipName);
+		}
 		if (!bAsync) {test.Print(reason);}
 		return true;
 	};
 	this.backupDebounced = () => {
 		if (!this.active) {return false;}
 		const now = Date.now();
-		if ((now - this.lastBackup) >= 30000) {
+		if ((now - this.lastBackup) >= this.backupMinInterval) {
 			if (this.iPlaying && this.timePlaying && (now - this.timePlaying) >= this.iPlaying) {
-				this.backup({reason: 'playing'});
+				this.saveFooConfig();
+				setTimeout(() => this.backup({reason: 'playing'}), this.configTimeout);
 				this.lastBackup = now;
 				this.timePlaying = this.timePlaying + this.iPlaying;
 			} else if (this.iStop && this.timePaused && (now - this.timePaused) >= this.iStop) {
-				this.backup({reason: 'paused'});
+				this.saveFooConfig();
+				setTimeout(() => this.backup({reason: 'paused'}), this.configTimeout);
 				this.lastBackup = now
 				this.timePaused = 0;
 			} else if (this.iTrack && this.timePlaying && playedTracks >= this.iTrack) {
-				this.backup({reason: 'tracks'});
+				this.saveFooConfig();
+				setTimeout(() => this.backup({reason: 'tracks'}), this.configTimeout);
 				this.lastBackup = now;
 				this.playedTracks -= this.iTrack;
 			} else if (this.iStart && this.timeInit && (now - this.timeInit) >= this.iStart) {
-				this.backup({reason: 'startup'});
+				this.saveFooConfig();
+				setTimeout(() => this.backup({reason: 'startup'}), this.configTimeout);
 				this.lastBackup = now;
 				this.timeInit = 0;
 			} else if (this.iInterval && this.lastBackup && (now - this.lastBackup) >= this.iInterval) {
-				this.backup({reason: 'interval'});
+				this.saveFooConfig();
+				setTimeout(() => this.backup({reason: 'interval'}), this.configTimeout);
 				this.lastBackup = now
 			}
 		}
 		return this.lastBackup === now;
+	}
+	this.forceBackup = () => {
+		return this.saveFooConfig() && setTimeout(() => this.backup({reason: 'forced'}), this.configTimeout);
 	}
 	// Internals
 	this.lastBackup = 0;
@@ -129,6 +147,8 @@ function AutoBackup({
 	this.listeners = [];
 	this.active = true;
 	this.name = 'AutoBackup-SMP';
+	this.backupMinInterval = 30000;
+	this.configTimeout = 2000;
 	// Vars
 	this.iBackups = iBackups;
 	this.backupsMaxSize = backupsMaxSize;
@@ -141,6 +161,7 @@ function AutoBackup({
 	this.iInterval = iInterval;
 	this.iStart = iStart;
 	this.iTrack = iTrack;
+	this.iClose = iClose;
 	
 	this.init();
 };
