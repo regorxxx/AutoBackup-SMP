@@ -37,6 +37,11 @@ Rules: (times in min)
 	configuration is saved. Note that saving too often is 
 	blocked to avoid problems when going through a playlist too
 	fast (e.g. on very short files or invalid entries). 
+- On foobar2000 exit (script unload), after X seconds (0 = off):
+	When the program closes or the script is unloaded (for
+	ex. after reloading the panel), a backup is scheduled
+	to be run after X seconds. Note the configuration is
+	saved on exit automatically (but not on script reloading).
 - Saving by any rule more often than 30 seconds since last 
 	autosave is blocked to avoid lockup or crash problems.
 	

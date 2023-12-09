@@ -21,6 +21,7 @@ A [Spider Monkey Panel](https://theqwertiest.github.io/foo_spider_monkey_panel) 
   * Always, since last autosave (every X min, 0 = off).
   * On startup, after X minutes (backup only, 0 = off).
   * Every X tracks (0 = off).
+  * On foobar2000 exit (script unload), after X seconds (0 = off).
 * Files and folders to backup can be set by name and mask (for example 'js_data\\playlistManager_*').
 * Output Zip archive path and name is configurable.
 * Backups to keep can be set by number and/or total file size.
