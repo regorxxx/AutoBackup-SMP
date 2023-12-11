@@ -9,6 +9,7 @@
 - Events: added setting to create a backup after foobar2000 closes (or on script unloading). By default set to 20 seconds later.
 ### Changed
 - Backup is now done 2 seconds after foobar2000 configuration is saved.
+- Helpers: updated helpers.
 ### Removed
 ### Fixed
 - Events: configuration was not being forced to save before creating an automatic backup.
