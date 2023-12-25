@@ -7,6 +7,7 @@
 ## [Unreleased][]
 ### Added
 - Events: added setting to create a backup after foobar2000 closes (or on script unloading). By default set to 20 seconds later.
+- Added integrity checks to global user settings files, found at '[FOOBAR PROFILE FOLDER]\js_data\presets\global\[...].json'. In particular queries are now check to ensure they are valid and will throw a popup at init otherwise. Other settings are check to ensure they contain valid values too.
 ### Changed
 - Backup is now done 2 seconds after foobar2000 configuration is saved.
 - Helpers: updated helpers.
