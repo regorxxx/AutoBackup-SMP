@@ -1,10 +1,14 @@
 'use strict';
-//30/12/23
+//31/12/23
 
 /* exported AutoBackup */
 
+include('..\\..\\helpers\\helpers_xxx.js');
+/* global doOnce:readable */
+include('..\\..\\helpers\\helpers_xxx_prototypes.js');
+/* global round:readable */
 include('..\\..\\helpers\\helpers_xxx_file.js');
-/* global _createFolder:readable, getFiles:readable, _recycleFile:readable */
+/* global _createFolder:readable, getFiles:readable, _recycleFile:readable, getPathMeta:readable */
 include('..\\..\\helpers\\helpers_xxx_file_zip.js');
 /* global _zip:readable */
 
@@ -18,6 +22,7 @@ function AutoBackup({
 	iStart = 10 * 60 * 1000,
 	iTrack = 0,
 	iClose = 20,
+	minDriveSize = backupsMaxSize * 2,
 	outputPath, files, backupFormat
 } = {}) {
 	this.addEventListeners = () => {
@@ -42,7 +47,10 @@ function AutoBackup({
 				}
 			}),
 			addEventListener('on_script_unload', () => {
-				if (this.active && this.iClose) { this.backup({ reason: 'unload', bAsync: true, timeout: this.iClose }); }
+				if (this.active && this.iClose) {
+					if (!this.checkDriveSpace(false)) { return; }
+					this.backup({ reason: 'unload', bAsync: true, timeout: this.iClose });
+				}
 			}),
 		];
 	};
@@ -65,6 +73,29 @@ function AutoBackup({
 
 	this.saveFooConfig = () => {
 		try { fb.RunMainMenuCommand('Save configuration'); } catch (e) { console.log(e); return false; }
+		return true;
+	};
+
+	this.getFreeSpace = () => {
+		const driveMeta = getPathMeta(fb.ProfilePath, 'B');
+		return driveMeta.size.free || 0;
+	};
+
+	this.checkDriveSpace = (bShowPopup = true) => {
+		if (this.minDriveSize) {
+			const space = this.getFreeSpace();
+			if (space < this.minDriveSize) {
+				bShowPopup && doOnce('AutoBackup: full drive',
+					() => {
+						fb.ShowPopupMessage(
+							'Free drive space is under the minimum threshold:\n' +
+							round(space / 1024 ** 2, 1) + ' MB < ' + round(this.minDriveSize / 1024 ** 2, 1) + ' MB'
+							, 'AutoBackup'
+						);
+					})();
+				return false;
+			}
+		}
 		return true;
 	};
 
@@ -112,26 +143,31 @@ function AutoBackup({
 		if ((now - this.lastBackup) >= this.backupMinInterval) {
 			if (this.iPlaying && this.timePlaying && (now - this.timePlaying) >= this.iPlaying) {
 				this.saveFooConfig();
+				if (!this.checkDriveSpace()) { return false; }
 				setTimeout(() => this.backup({ reason: 'playing' }), this.configTimeout);
 				this.lastBackup = now;
 				this.timePlaying = this.timePlaying + this.iPlaying;
 			} else if (this.iStop && this.timePaused && (now - this.timePaused) >= this.iStop) {
 				this.saveFooConfig();
+				if (!this.checkDriveSpace()) { return false; }
 				setTimeout(() => this.backup({ reason: 'paused' }), this.configTimeout);
 				this.lastBackup = now;
 				this.timePaused = 0;
 			} else if (this.iTrack && this.timePlaying && this.playedTracks >= this.iTrack) {
 				this.saveFooConfig();
+				if (!this.checkDriveSpace()) { return false; }
 				setTimeout(() => this.backup({ reason: 'tracks' }), this.configTimeout);
 				this.lastBackup = now;
 				this.playedTracks -= this.iTrack;
 			} else if (this.iStart && this.timeInit && (now - this.timeInit) >= this.iStart) {
 				this.saveFooConfig();
+				if (!this.checkDriveSpace()) { return false; }
 				setTimeout(() => this.backup({ reason: 'startup' }), this.configTimeout);
 				this.lastBackup = now;
 				this.timeInit = 0;
 			} else if (this.iInterval && this.lastBackup && (now - this.lastBackup) >= this.iInterval) {
 				this.saveFooConfig();
+				if (!this.checkDriveSpace()) { return false; }
 				setTimeout(() => this.backup({ reason: 'interval' }), this.configTimeout);
 				this.lastBackup = now;
 			}
@@ -166,6 +202,7 @@ function AutoBackup({
 	this.iStart = iStart;
 	this.iTrack = iTrack;
 	this.iClose = iClose;
+	this.minDriveSize = minDriveSize;
 
 	this.init();
 }
