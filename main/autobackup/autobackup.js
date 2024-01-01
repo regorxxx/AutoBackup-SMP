@@ -1,5 +1,5 @@
 'use strict';
-//31/12/23
+//01/01/24
 
 /* exported AutoBackup */
 
@@ -122,6 +122,7 @@ function AutoBackup({
 				_recycleFile(files.pop(), true);
 			}
 		}
+		if (reason.toLowerCase() !== 'forced' && !this.checkDriveSpace()) { return false; }
 		const fileMask = this.files.map((e) => e.path);
 		const backupFormat = this.backupFormat;
 		const zipName = backupFormat.reduce(
@@ -143,31 +144,26 @@ function AutoBackup({
 		if ((now - this.lastBackup) >= this.backupMinInterval) {
 			if (this.iPlaying && this.timePlaying && (now - this.timePlaying) >= this.iPlaying) {
 				this.saveFooConfig();
-				if (!this.checkDriveSpace()) { return false; }
 				setTimeout(() => this.backup({ reason: 'playing' }), this.configTimeout);
 				this.lastBackup = now;
 				this.timePlaying = this.timePlaying + this.iPlaying;
 			} else if (this.iStop && this.timePaused && (now - this.timePaused) >= this.iStop) {
 				this.saveFooConfig();
-				if (!this.checkDriveSpace()) { return false; }
 				setTimeout(() => this.backup({ reason: 'paused' }), this.configTimeout);
 				this.lastBackup = now;
 				this.timePaused = 0;
 			} else if (this.iTrack && this.timePlaying && this.playedTracks >= this.iTrack) {
 				this.saveFooConfig();
-				if (!this.checkDriveSpace()) { return false; }
 				setTimeout(() => this.backup({ reason: 'tracks' }), this.configTimeout);
 				this.lastBackup = now;
 				this.playedTracks -= this.iTrack;
 			} else if (this.iStart && this.timeInit && (now - this.timeInit) >= this.iStart) {
 				this.saveFooConfig();
-				if (!this.checkDriveSpace()) { return false; }
 				setTimeout(() => this.backup({ reason: 'startup' }), this.configTimeout);
 				this.lastBackup = now;
 				this.timeInit = 0;
 			} else if (this.iInterval && this.lastBackup && (now - this.lastBackup) >= this.iInterval) {
 				this.saveFooConfig();
-				if (!this.checkDriveSpace()) { return false; }
 				setTimeout(() => this.backup({ reason: 'interval' }), this.configTimeout);
 				this.lastBackup = now;
 			}
