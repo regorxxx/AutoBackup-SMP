@@ -8,7 +8,7 @@
 ### Added
 - Events: added setting to skip backups whenever free space on drive is below a threshold. Since old backups are sent to recycle bin, instead of deleting them, size usage may increase indefinitely if the recycle bin was not emptied by the user. This setting avoids this situation.On demand backups bypass this restriction.
 - Events: added setting to create a backup after foobar2000 closes (or on script unloading). By default set to 20 seconds later.
-- Added integrity checks to global user settings files, found at '[FOOBAR PROFILE FOLDER]\js_data\presets\global\[...].json'. In particular queries are now check to ensure they are valid and will throw a popup at init otherwise. Other settings are check to ensure they contain valid values too.
+- Configuration: added integrity checks to global user settings files, found at '[FOOBAR PROFILE FOLDER]\js_data\presets\global\[...].json'. In particular queries are now check to ensure they are valid and will throw a popup at init otherwise. Other settings are check to ensure they contain valid values too.
 - Toolbar: new settings for text (or icon) position: left, right (default), top and bottom. These settings mimic CUI options at the buttons bar.
 - Toolbar: new settings for text scale (now independent of button and icon scale).
 - Toolbar: new settings for icon scale (now independent of button and text scale).
