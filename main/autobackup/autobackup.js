@@ -1,5 +1,5 @@
 'use strict';
-//01/01/24
+//04/01/24
 
 /* exported AutoBackup */
 
@@ -131,9 +131,9 @@ function AutoBackup({
 		);
 		_zip(fileMask, fb.ProfilePath + outputPath + zipName + '.zip', bAsync, fb.ProfilePath, timeout);
 		if (timeout) {
-			console.log(this.name + ' (' + reason + '): Scheduled backup of items on ' + timeout + ' seconds to ' + outputPath + zipName);
+			console.log(this.name + ' (' + reason + '): Scheduled backup of items on ' + timeout + ' seconds to ' + outputPath + zipName); // DEBUG
 		} else {
-			console.log(this.name + ' (' + reason + '): Backed up items to ' + outputPath + zipName);
+			console.log(this.name + ' (' + reason + '): Backed up items to ' + outputPath + zipName); // DEBUG
 		}
 		if (!bAsync) { test.Print(reason); }
 		return true;

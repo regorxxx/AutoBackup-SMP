@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/01/24
+//05/01/24
 
 /* global menu_panelProperties:readable */
 include('..\\helpers\\helpers_xxx.js');
@@ -34,7 +34,7 @@ var newButtonsProperties = { // NOSONAR[global]
 	iPlaying: ['While playing (every X min, 0 = off)', 60, { func: isInt }, 60],
 	iStop: ['When playback stops (after X min, 0 = off)', 5, { func: isInt }, 5],
 	iInterval: ['Always, since last autosave (every X min, 0 = off)', 30, { func: isInt }, 30],
-	iStart: ['On startup (after X min, 0 = off)', 1, { func: isInt }, 1],
+	iStart: ['On startup (after X min, 0 = off)', 3, { func: isInt }, 3],
 	iTrack: ['Every X tracks (0 = off)', 0, { func: isInt }, 0],
 	iClose: ['On Foobar2000 exit (after X secs, 0 = off)', 20, { func: isInt }, 20],
 	files: ['Files and Folders mask',
