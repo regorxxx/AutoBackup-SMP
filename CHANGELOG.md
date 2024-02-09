@@ -15,6 +15,7 @@
 ### Changed
 - Backup is now done 2 seconds after foobar2000 configuration is saved.
 - Helpers: updated helpers.
+- Console: improved log file formatting on windows text editors which parse new lines only with CR+LF instead of LF.
 - Code cleanup.
 ### Removed
 ### Fixed
