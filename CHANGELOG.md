@@ -24,6 +24,7 @@
 - Events: fixed temporary wrong setting of backups by number of tracks played after changing it (it was fixed by reloading the script).
 - Toolbar: buttons' size not restored back to normal height after disabling 'Full size buttons' without reloading the panel.
 - File formatting: error checking Regular Expressions on user input.
+- UI: wrong parsing of png masks on unix systems (currently, it only affected the ListenBrainz icon when changing the font color).
 - Minor fixes.
 
 ## [1.0.0] - 2023-12-08
