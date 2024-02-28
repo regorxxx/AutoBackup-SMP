@@ -15,6 +15,7 @@
 - Toolbar: new settings for icon scale (now independent of button and text scale).
 ### Changed
 - Backup is now done 2 seconds after foobar2000 configuration is saved.
+- Buttons: changed filename for 'buttons_others_utils_autobackup.js' to 'buttons_utils_autobackup.js' Before updating, rename all instances of these names at '[foobar2000 profile]\js_data\buttons_XXX.json' with the new names. 'buttons_XXXXX.json' are all json button toolbar files.
 - Helpers: updated helpers.
 - Console: improved log file formatting on windows text editors which parse new lines only with CR+LF instead of LF.
 - Code cleanup.
