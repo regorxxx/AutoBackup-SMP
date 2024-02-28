@@ -2,9 +2,16 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [2.0.0](#200---2024-02-28)
 - [1.0.0](#100---2023-12-08)
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [2.0.0] - 2024-02-28
 ### Added
 - Events: added setting to skip backups whenever free space on drive is below a threshold. Since old backups are sent to recycle bin, instead of deleting them, size usage may increase indefinitely if the recycle bin was not emptied by the user. This setting avoids this situation.On demand backups bypass this restriction.
 - Events: added setting to create a backup after foobar2000 closes (or on script unloading). By default set to 20 seconds later.
@@ -35,5 +42,6 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/Autobackup-SMP/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/regorxxx/Autobackup-SMP/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/regorxxx/Autobackup-SMP/compare/8b303b...v1.0.0
