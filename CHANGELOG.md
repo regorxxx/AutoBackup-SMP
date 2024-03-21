@@ -2,12 +2,20 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [2.1.0](#210---2024-03-21)
 - [2.0.0](#200---2024-02-28)
 - [1.0.0](#100---2023-12-08)
 
 ## [Unreleased][]
 ### Added
+### Changed
+### Removed
+### Fixed
+
+## [2.1.0] - 2024-03-21
+### Added
 - Configuration: expanded user configurable file at '[FOOBAR PROFILE FOLDER]\js_data\presets\global\globSettings.json' with a new setting for panel repaint debugging purpose. Disabled by default.
+- Configuration: expanded user configurable file at '[FOOBAR PROFILE FOLDER]\js_data\presets\global\globSettings.json' with a new setting to check OS features on every panel startup. Enabled by default. This has been the default behavior since OS' features check was implemented, but it can now be disabled to improve init performance a bit, specially at foobar2000 startup (since it seems to hang in some cases when running it on slow HDDs or systems).
 ### Changed
 - UI: Improved panel repaint routines to minimize resources usage.
 ### Removed
@@ -44,6 +52,7 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/regorxxx/Autobackup-SMP/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/regorxxx/Autobackup-SMP/compare/8b303b...v1.0.0
