@@ -8,6 +8,7 @@
 
 ## [Unreleased][]
 ### Added
+- Events: added setting to force a config save (without backup) every X tracks played. This is mostly meant to be used while rating tracks and previewing them, which probably doesn't require a backup but only changes to be saved (in case foobar2000 crashes).
 - Configuration: expanded user configurable file at '[FOOBAR PROFILE FOLDER]\js_data\presets\global\globSettings.json' with a new setting for console logging to file. Disabled by default. Now this is a change from the previous behavior, where console was always logged to 'console.log' file at the [FOOBAR PROFILE FOLDER]. It can now be switched, but since it's probably not useful for most users is disabled by default.
 - Readmes: added readme for global settings found at'foobar2000\js_data\presets\global' .json files.
 ### Changed

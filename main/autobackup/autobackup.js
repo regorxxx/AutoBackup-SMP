@@ -1,5 +1,5 @@
 'use strict';
-//04/01/24
+//29/04/24
 
 /* exported AutoBackup */
 
@@ -21,6 +21,7 @@ function AutoBackup({
 	iInterval = 10 * 60 * 1000,
 	iStart = 10 * 60 * 1000,
 	iTrack = 0,
+	iTrackSave = 0,
 	iClose = 20,
 	minDriveSize = backupsMaxSize * 2,
 	outputPath, files, backupFormat
@@ -141,29 +142,41 @@ function AutoBackup({
 	this.backupDebounced = () => {
 		if (!this.active) { return false; }
 		const now = Date.now();
+		// Save routines
+		let bSaved = false;
+		let bDecrTracks = false;
+		if ((now - this.lastSave) >= this.backupMinInterval) {
+			if (this.iTrackSave && this.timePlaying && this.playedTracks >= this.iTrackSave) {
+				this.saveFooConfig();
+				this.lastSave = now;
+				this.playedTracks -= this.iTrack;
+				bDecrTracks = bSaved = true;
+			}
+		}
+		// Backup routines
 		if ((now - this.lastBackup) >= this.backupMinInterval) {
 			if (this.iPlaying && this.timePlaying && (now - this.timePlaying) >= this.iPlaying) {
-				this.saveFooConfig();
+				if (!bSaved) { this.saveFooConfig(); this.lastSave = now; }
 				setTimeout(() => this.backup({ reason: 'playing' }), this.configTimeout);
 				this.lastBackup = now;
 				this.timePlaying = this.timePlaying + this.iPlaying;
 			} else if (this.iStop && this.timePaused && (now - this.timePaused) >= this.iStop) {
-				this.saveFooConfig();
+				if (!bSaved) { this.saveFooConfig(); this.lastSave = now; }
 				setTimeout(() => this.backup({ reason: 'paused' }), this.configTimeout);
 				this.lastBackup = now;
 				this.timePaused = 0;
 			} else if (this.iTrack && this.timePlaying && this.playedTracks >= this.iTrack) {
-				this.saveFooConfig();
+				if (!bSaved) { this.saveFooConfig(); this.lastSave = now; }
 				setTimeout(() => this.backup({ reason: 'tracks' }), this.configTimeout);
 				this.lastBackup = now;
-				this.playedTracks -= this.iTrack;
+				if (!bDecrTracks) { this.playedTracks -= this.iTrack; }
 			} else if (this.iStart && this.timeInit && (now - this.timeInit) >= this.iStart) {
-				this.saveFooConfig();
+				if (!bSaved) { this.saveFooConfig(); this.lastSave = now; }
 				setTimeout(() => this.backup({ reason: 'startup' }), this.configTimeout);
 				this.lastBackup = now;
 				this.timeInit = 0;
 			} else if (this.iInterval && this.lastBackup && (now - this.lastBackup) >= this.iInterval) {
-				this.saveFooConfig();
+				if (!bSaved) { this.saveFooConfig(); this.lastSave = now; }
 				setTimeout(() => this.backup({ reason: 'interval' }), this.configTimeout);
 				this.lastBackup = now;
 			}
@@ -175,6 +188,7 @@ function AutoBackup({
 	};
 	// Internals
 	this.lastBackup = 0;
+	this.lastSave = 0;
 	this.playedTracks = 0;
 	this.timePlaying = 0;
 	this.timePaused = 0;
@@ -197,6 +211,7 @@ function AutoBackup({
 	this.iInterval = iInterval;
 	this.iStart = iStart;
 	this.iTrack = iTrack;
+	this.iTrackSave = iTrackSave;
 	this.iClose = iClose;
 	this.minDriveSize = minDriveSize;
 

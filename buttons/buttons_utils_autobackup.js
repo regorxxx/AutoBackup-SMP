@@ -1,5 +1,5 @@
 ﻿'use strict';
-//21/03/24
+//29/04/24
 
 /* global menu_panelProperties:readable */
 include('..\\helpers\\helpers_xxx.js');
@@ -34,9 +34,10 @@ var newButtonsProperties = { // NOSONAR[global]
 	iPlaying: ['While playing (every X min, 0 = off)', 60, { func: isInt }, 60],
 	iStop: ['When playback stops (after X min, 0 = off)', 5, { func: isInt }, 5],
 	iInterval: ['Always, since last autosave (every X min, 0 = off)', 30, { func: isInt }, 30],
-	iStart: ['On startup (after X min, 0 = off)', 3, { func: isInt }, 3],
+	iStart: ['On startup (after X min, 0 = off)', 5, { func: isInt }, 5],
 	iTrack: ['Every X tracks (0 = off)', 0, { func: isInt }, 0],
 	iClose: ['On Foobar2000 exit (after X secs, 0 = off)', 20, { func: isInt }, 20],
+	iTrackSave: ['[Save] every X tracks (0 = off)', 5, { func: isInt }, 5],
 	files: ['Files and Folders mask',
 		JSON.stringify([
 			// Foobar folders
@@ -102,10 +103,11 @@ addButton({
 			});
 			{
 				const menuName = menu.newMenu('Interval settings...');
-				['iPlaying', 'iStop', 'iInterval', 'iStart', 'iTrack', 'iClose'].forEach((key) => {
+				['iPlaying', 'iStop', 'iInterval', 'iStart', 'iTrack', 'iClose', 'sep', 'iTrackSave'].forEach((key) => {
+					if (key === 'sep') { menu.newEntry({ menuName, entryText: 'sep' }); return; }
 					const value = this.buttonsProperties[key][1];
 					const entryText = this.buttonsProperties[key][0].replace(/[a-zA-Z]*\d*_*\d*\./, '') + '\t[' + value + ']';
-					const unit = key === 'iTrack'
+					const unit = key === 'iTrack' || key === 'iTrackSave'
 						? 'tracks'
 						: key === 'iClose'
 							? 'seconds'
@@ -303,6 +305,7 @@ addButton({
 			iStart: Number(newButtonsProperties.iStart[1]) * 60000,
 			iTrack: Number(newButtonsProperties.iTrack[1]),
 			iClose: Number(newButtonsProperties.iClose[1]),
+			iTrackSave: Number(newButtonsProperties.iTrackSave[1]),
 			minDriveSize: Number(newButtonsProperties.minDriveSize[1]) * 1024 * 1024,
 		})
 	}, void (0), function () {
