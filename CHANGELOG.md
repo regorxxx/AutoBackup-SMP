@@ -15,6 +15,7 @@
 - Helpers: json button files are now saved with Windows EOL for compatibility improvements with Windows text editors.
 ### Removed
 ### Fixed
+- Configuration: .json files at 'foobar2000\js_data\presets\global' not being saved with the calculated properties based on user values from other files.
 
 ## [2.1.0] - 2024-03-21
 ### Added
