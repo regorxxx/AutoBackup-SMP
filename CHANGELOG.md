@@ -2,11 +2,18 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [2.2.0](#220---2024-07-24)
 - [2.1.0](#210---2024-03-21)
 - [2.0.0](#200---2024-02-28)
 - [1.0.0](#100---2023-12-08)
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [2.2.0] - 2024-07-24
 ### Added
 - Events: added setting to force a config save (without backup) every X tracks played. This is mostly meant to be used while rating tracks and previewing them, which probably doesn't require a backup but only changes to be saved (in case foobar2000 crashes).
 - Configuration: expanded user configurable file at '[FOOBAR PROFILE FOLDER]\js_data\presets\global\globSettings.json' with a new setting for console logging to file. Disabled by default. Now this is a change from the previous behavior, where console was always logged to 'console.log' file at the [FOOBAR PROFILE FOLDER]. It can now be switched, but since it's probably not useful for most users is disabled by default.
@@ -57,7 +64,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/regorxxx/Autobackup-SMP/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/regorxxx/Autobackup-SMP/compare/8b303b...v1.0.0
