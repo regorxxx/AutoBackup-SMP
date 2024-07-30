@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [2.3.0](#230---2024-07-30)
 - [2.2.0](#220---2024-07-24)
 - [2.1.0](#210---2024-03-21)
 - [2.0.0](#200---2024-02-28)
@@ -10,6 +11,13 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+### Removed
+### Fixed
+
+## [2.3.0] - 2024-07-30
+### Added
+### Changed
+- Helpers: updated helpers.
 ### Removed
 ### Fixed
 
@@ -64,7 +72,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.3.0...HEAD
+[2.3.0]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/regorxxx/Autobackup-SMP/compare/v1.0.0...v2.0.0
