@@ -1,5 +1,5 @@
 ﻿'use strict';
-//30/07/24
+//13/08/24
 
 /* global menu_panelProperties:readable */
 include('..\\helpers\\helpers_xxx.js');
@@ -24,7 +24,7 @@ include('..\\main\\autobackup\\autobackup.js');
 /* global AutoBackup:readable */
 
 var prefix = 'bak'; // NOSONAR[global]
-var version = '2.3.0'; // NOSONAR[global]
+var version = '2.3.1'; // NOSONAR[global]
 
 try { window.DefineScript('AutoBackup Button', { author: 'regorxxx', version, features: { drag_n_drop: false } }); } catch (e) { /* May be loaded along other buttons */ }
 
