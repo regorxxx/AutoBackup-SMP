@@ -12,6 +12,7 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+- UI: folder and backup format preset entries can now be cloned.
 - Helpers: updated helpers.
 ### Removed
 ### Fixed
