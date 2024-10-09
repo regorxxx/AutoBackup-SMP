@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [2.4.0](#240---2024-10-09)
 - [2.3.1](#231---2024-08-13)
 - [2.3.0](#230---2024-07-30)
 - [2.2.0](#220---2024-07-24)
@@ -10,6 +11,12 @@
 - [1.0.0](#100---2023-12-08)
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [2.4.0] - 2024-10-09
 ### Added
 ### Changed
 - UI: folder and backup format preset entries can now be cloned.
@@ -84,7 +91,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.3.1...HEAD
+[Unreleased]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.4.0...HEAD
+[2.4.0]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.3.1...v2.4.0
 [2.3.1]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.3.0...v2.3.1
 [2.3.0]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.1.0...v2.2.0
