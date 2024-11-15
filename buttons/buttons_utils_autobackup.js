@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/10/24
+//15/11/24
 
 /* global menu_panelProperties:readable */
 include('..\\helpers\\helpers_xxx.js');
@@ -104,7 +104,7 @@ addButton({
 			{
 				const menuName = menu.newMenu('Interval settings...');
 				['iPlaying', 'iStop', 'iInterval', 'iStart', 'iTrack', 'iClose', 'sep', 'iTrackSave'].forEach((key) => {
-					if (key === 'sep') { menu.newEntry({ menuName, entryText: 'sep' }); return; }
+					if (menu.isSeparator(key)) { menu.newEntry({ menuName, entryText: key }); return; }
 					const value = this.buttonsProperties[key][1];
 					const entryText = this.buttonsProperties[key][0].replace(/[a-zA-Z]*\d*_*\d*\./, '') + '\t[' + value + ']';
 					const unit = key === 'iTrack' || key === 'iTrackSave'
@@ -189,7 +189,7 @@ addButton({
 						overwriteProperties(this.buttonsProperties);
 					}
 				});
-				menu.newEntry({ menuName, entryText: 'sep' });
+				menu.newSeparator(menuName);
 				{
 					const value = this.buttonsProperties.iBackups[1];
 					const entryText = this.buttonsProperties.iBackups[0].replace(/[a-zA-Z]*\d*_*\d*\./, '') + '\t[' + value + ']';
@@ -231,9 +231,9 @@ addButton({
 						}
 					});
 				}
-				menu.newEntry({ menuName, entryText: 'sep' });
+				menu.newSeparator(menuName);
 				['bAsync', 'sep', 'active', 'bStartActive'].forEach((key) => {
-					if (key === 'sep') { menu.newEntry({ menuName, entryText: 'sep' }); return; }
+					if (menu.isSeparator(key)) { menu.newEntry({ menuName, entryText: key }); return; }
 					const entryText = this.buttonsProperties[key][0].replace(/[a-zA-Z]*\d*_*\d*\./, '');
 					menu.newEntry({
 						menuName, entryText, func: () => {
@@ -245,7 +245,7 @@ addButton({
 					menu.newCheckMenuLast(() => { return this.buttonsProperties[key][1]; });
 				});
 			}
-			menu.newEntry({ entryText: 'sep' });
+			menu.newSeparator();
 			{
 				const entryText = this.buttonsProperties.active[0].replace(/[a-zA-Z]*\d*_*\d*\./, '');
 				menu.newEntry({
@@ -257,15 +257,15 @@ addButton({
 				});
 				menu.newCheckMenuLast(() => { return this.buttonsProperties.active[1]; });
 			}
-			menu.newEntry({ entryText: 'sep' });
+			menu.newSeparator();
 			menu.newEntry({ entryText: 'Execute Save & Backup', func: this.autoBackup.forceBackup });
-			menu.newEntry({ entryText: 'sep' });
+			menu.newSeparator();
 			menu.newEntry({
 				entryText: 'Open backup folder...', func: () => {
 					_explorer(fb.ProfilePath + this.autoBackup.outputPath.split('\\').slice(0, -1).join('\\'));
 				}
 			});
-			menu.newEntry({ entryText: 'sep' });
+			menu.newSeparator();
 			menu.newEntry({
 				entryText: 'Readme...', func: () => {
 					const readmeList = _isFile(folders.xxx + 'helpers\\readme\\buttons_list.json') ? _jsonParseFileCheck(folders.xxx + 'helpers\\readme\\buttons_list.json', 'Readme list', window.Name, utf8) : null;
