@@ -1,5 +1,5 @@
 ﻿'use strict';
-//15/11/24
+//09/12/24
 
 /* global menu_panelProperties:readable */
 include('..\\helpers\\helpers_xxx.js');
@@ -76,7 +76,7 @@ var newButtonsProperties = { // NOSONAR[global]
 	],
 	bAsync: ['Aynchronous backup processing', true, { func: isBoolean }, true],
 	active: ['AutoBackup activated', true, { func: isBoolean }, true],
-	bIconMode: ['Icon-only mode?', false, { func: isBoolean }, false],
+	bIconMode: ['Icon-only mode', false, { func: isBoolean }, false],
 	bStartActive: ['Always active on startup', true, { func: isBoolean }, true],
 	bHeadlessMode: ['Headless mode', false, { func: isBoolean }, false],
 	backupsMaxSize: ['Max size of backup files (MB)', 2000, { func: isInt }, 2000],
