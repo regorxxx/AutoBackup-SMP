@@ -1,11 +1,11 @@
 ﻿'use strict';
-//13/02/25
+//17/03/25
 
 /* global menu_panelProperties:readable */
 include('..\\helpers\\helpers_xxx.js');
-/* global globFonts:readable, MK_SHIFT:readable, VK_SHIFT:readable, folders:readable */
+/* global globFonts:readable, MK_CONTROL:readable, VK_CONTROL:readable */
 include('..\\helpers\\buttons_xxx.js');
-/* global getUniquePrefix:readable, buttonsBar:readable, addButton:readable, ThemedButton:readable */
+/* global getUniquePrefix:readable, buttonsBar:readable, addButton:readable, ThemedButton:readable, showButtonReadme:readable */
 include('..\\helpers\\menu_xxx.js');
 /* global _menu:readable  */
 include('..\\helpers\\menu_xxx_extras.js');
@@ -13,7 +13,7 @@ include('..\\helpers\\menu_xxx_extras.js');
 include('..\\helpers\\helpers_xxx_prototypes.js');
 /* global isBoolean:readable, isInt:readable, isJSON:readable, isString:readable */
 include('..\\helpers\\helpers_xxx_file.js');
-/* global _open:readable, utf8:readable, _jsonParseFileCheck:readable, _isFile:readable, _explorer:readable */
+/* global _explorer:readable */
 include('..\\helpers\\helpers_xxx_UI.js');
 /* global _gdiFont:readable, _gr:readable, _scale:readable, chars:readable */
 include('..\\helpers\\helpers_xxx_properties.js');
@@ -26,7 +26,7 @@ include('..\\main\\autobackup\\autobackup.js');
 var prefix = 'bak'; // NOSONAR[global]
 var version = '2.4.0'; // NOSONAR[global]
 
-try { window.DefineScript('AutoBackup Button', { author: 'regorxxx', version, features: { drag_n_drop: false } }); } catch (e) { /* May be loaded along other buttons */ }
+try { window.DefineScript('AutoBackup Button', { author: 'regorxxx', version, features: { drag_n_drop: false } }); } catch (e) { /* May be loaded along other buttons */ } // eslint-disable-line no-unused-vars
 
 prefix = getUniquePrefix(prefix, ''); // Puts new ID before '_'
 
@@ -94,7 +94,7 @@ addButton({
 		coordinates: { x: 0, y: 0, w: _gr.CalcTextWidth('AutoBackup', _gdiFont(globFonts.button.name, globFonts.button.size * buttonsBar.config.scale)) + 25 * _scale(1, false) / _scale(buttonsBar.config.scale), h: 22 },
 		text: 'AutoBackup',
 		func: function (mask) {
-			if ((MK_SHIFT & mask) === MK_SHIFT) { // NOSONAR [bitwise]
+			if ((MK_CONTROL & mask) === MK_CONTROL) { // NOSONAR [bitwise]
 				this.autoBackup.forceBackup();
 			} else {
 				// Menu
@@ -182,7 +182,7 @@ addButton({
 								) || {})
 							};
 							if (!Object.hasOwn(entry, 'regex') || !Object.hasOwn(entry, 'flag') || !Object.hasOwn(entry, 'replacer')) { return; }
-							try { new RegExp(entry.regex, entry.flag); } catch (e) { return; }
+							try { new RegExp(entry.regex, entry.flag); } catch (e) { return; } // eslint-disable-line no-unused-vars
 							return entry;
 						},
 						bNumbered: true,
@@ -269,30 +269,20 @@ addButton({
 					}
 				});
 				menu.newSeparator();
-				menu.newEntry({
-					entryText: 'Readme...', func: () => {
-						const readmeList = _isFile(folders.xxx + 'helpers\\readme\\buttons_list.json') ? _jsonParseFileCheck(folders.xxx + 'helpers\\readme\\buttons_list.json', 'Readme list', window.Name, utf8) : null;
-						if (readmeList) {
-							const readmeFile = Object.hasOwn(readmeList, 'buttons_others_autobackup.js') ? readmeList['buttons_others_autobackup.js'] : '';
-							const readme = readmeFile.length ? _open(folders.xxx + 'helpers\\readme\\' + readmeFile, utf8) : '';
-							if (readme.length) { fb.ShowPopupMessage(readme, readmeFile); }
-							else { console.log(readmeFile + ' not found.'); }
-						}
-					}
-				});
+				menu.newEntry({ entryText: 'Readme...', func: () => showButtonReadme('buttons_utils_autobackup.js') });
 				menu.btn_up(this.currX, this.currY + this.currH);
 			}
 		},
 		description: function () {
-			const bShift = utils.IsKeyPressed(VK_SHIFT);
+			const bCtrl = utils.IsKeyPressed(VK_CONTROL);
 			const bInfo = typeof menu_panelProperties === 'undefined' || menu_panelProperties.bTooltipInfo[1];
 			let info = 'AutoBackup foobar2000 config files:';
 			// Entries
 			const files = this.autoBackup.files;
 			info += '\nEntries:\t' + [...new Set(files.map(e => e.name.replace(/ \(.*\)/, '')))].joinEvery(', ', 3, '\n\t');
-			if (bShift || bInfo) {
+			if (bCtrl || bInfo) {
 				info += '\n-----------------------------------------------------';
-				info += '\n(Shift + L. Click to Save && Backup on demand)';
+				info += '\n(Ctrl + L. Click to Save && Backup on demand)';
 			}
 			return info;
 		},
