@@ -1,5 +1,5 @@
 ﻿'use strict';
-//17/05/25
+//03/06/25
 
 /* global menu_panelProperties:readable */
 include('..\\helpers\\helpers_xxx.js');
@@ -42,32 +42,38 @@ var newButtonsProperties = { // NOSONAR[global]
 		JSON.stringify([
 			// Foobar folders
 			{ name: 'Main config', path: 'configuration' },
-			{ name: 'Playlists (1)', path: 'playlists*' },
-			{ name: 'Statistics (1)', path: 'index-data' },
-			{ name: 'VST config', path: 'vst-presets' },
+			{ name: 'Playlists', path: 'playlists*' },
+			{ name: 'Library', path: 'library*' },
+			{ name: 'Statistics V1', path: 'index-data' },
+			{ name: 'VST presets', path: 'vst-presets' },
+			{ name: 'DSP presets', path: 'dsp-presets' },
 			// Foobar Files
 			{ name: 'Theme', path: 'theme.fth' },
-			{ name: 'Statistics (2)', path: 'PlaybackStatistics.dat' },
-			{ name: 'Library', path: 'database.dat' },
+			{ name: 'Main config V2', path: 'config.sqlite' },
+			{ name: 'Main dsp V2', path: 'config.fb2k-dsp' },
+			{ name: 'Tags V2', path: 'metadb.sqlite' },
+			{ name: 'File Operations', path: 'FileOps-Presets*' },
+			{ name: 'Large Fields', path: 'LLargeFieldsConfig.txt' },
+			// Components
+			{ name: 'foo_input_dvda', path: 'dvda_metabase' },
+			{ name: 'foo_input_sacd', path: 'sacd_metabase' },
+			{ name: 'foo_upnp', path: 'foo_upnp*' },
 			// JS scripts
 			{ name: 'Playlist Organizer', path: 'pl_organizer.txt' },
-			{ name: 'JS config', path: 'js_data\\presets' },
-			{ name: 'JS temp', path: 'js_data\\temp' },
-			{ name: 'Buttons', path: 'js_data\\buttons_*' },
-			{ name: 'Playlist Manager', path: 'js_data\\playlistManager_*' },
-			{ name: 'Devices (1)', path: 'js_data\\devices.json' },
-			{ name: 'Devices (2)', path: 'js_data\\devices_priority.json' },
-			{ name: 'ListenBrainz', path: 'js_data\\listenbrainz_feedback.json' },
-			{ name: 'Playlist Tools (1)', path: 'js_data\\playlistTools_presets.json' },
-			{ name: 'Playlist Tools (2)', path: 'js_data\\playlistTools_shortcuts.json' },
-			{ name: 'Playlist Tools (3)', path: 'js_data\\pools_presets.json' },
-			{ name: 'Similar Artists', path: 'js_data\\searchByDistance_artists.json' },
-			{ name: 'World Map (1)', path: 'js_data\\worldMap.json' },
-			{ name: 'World Map (2)', path: 'js_data\\worldMap_library.json' },
+			{ name: 'JS presets', path: 'js_data\\presets' },
+			{ name: 'JS helpers', path: 'js_data\\helpers' },
+			{ name: 'JS Buttons', path: 'js_data\\buttons_*' },
+			{ name: 'Playlist-Manager-SMP', path: 'js_data\\playlistManager_*' },
+			{ name: 'Device-Priority-SMP', path: 'js_data\\devices*' },
+			{ name: 'ListenBrainz-SMP', path: 'js_data\\listenbrainz_*' },
+			{ name: 'Playlist-Tools-SMP (1)', path: 'js_data\\playlistTools_*' },
+			{ name: 'Playlist-Tools-SMP (2)', path: 'js_data\\pools_presets.json' },
+			{ name: 'JS Similar Artists', path: 'js_data\\searchByDistance_artists.json' },
+			{ name: 'World-Map-SMP', path: 'js_data\\worldMap*' }
 		]),
 		{ func: isJSON }],
 	outputPath: ['Directory to store backup files', 'autobackup\\autobackup.', { func: isString }, 'autobackup\\autobackup.'],
-	iBackups: ['Number of backups to keep', 8, { func: isInt }, 8],
+	iBackups: ['Number of backups to keep', 20, { func: isInt }, 20],
 	backupFormat: ['Backups file format replacers',
 		JSON.stringify([
 			{ name: 'Remove \\- :,', regex: '[\\- :,]', flag: 'g', replacer: '' },
@@ -79,8 +85,8 @@ var newButtonsProperties = { // NOSONAR[global]
 	bIconMode: ['Icon-only mode', false, { func: isBoolean }, false],
 	bStartActive: ['Always active on startup', true, { func: isBoolean }, true],
 	bHeadlessMode: ['Headless mode', false, { func: isBoolean }, false],
-	backupsMaxSize: ['Max size of backup files (MB)', 2000, { func: isInt }, 2000],
-	minDriveSize: ['Min free space on drive (MB)', 4000, { func: isInt }, 4000],
+	backupsMaxSize: ['Max size of backup files (MB)', 5000, { func: isInt }, 5000],
+	minDriveSize: ['Min free space on drive (MB)', 10000, { func: isInt }, 10000],
 };
 newButtonsProperties.files.push(newButtonsProperties.files[1]);
 newButtonsProperties.backupFormat.push(newButtonsProperties.backupFormat[1]);

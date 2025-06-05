@@ -12,9 +12,13 @@
 
 ## [Unreleased][]
 ### Added
+- Files: added files at 'js_data\\helpers' to default files to backup.
+- Files: added foo_input_sacd and foo_input_dvda databases to default files to backup.
+- Files: added foobar v2 databases to default files to backup.
 - UI: toolbar tooltip now shows 'Shift + Win + R. Click' shortcut to open SMP/JSpliter panel menu (which works globally on any script and panel, at any position).
 - Readmes: Ctrl + L. Click on any entry within 'Add button' submenu on toolbar now opens directly their associated readme (without actually adding the button).
 ### Changed
+- Events: changed default backups max sixe to 5GB and number to 20.
 - Installation: added popup warnings when scripts are installed outside foobar2000 profile folder. These checks can be tweaked at globSettings.json.
 - Installation: script may now be installed at any path within the foobar profile folder, no longer limited to '[FOOBAR PROFILE FOLDER]\scripts\SMP\xxx-scripts\' folder. Obviously it may still be installed at such place, which may be preferred if updating an older version.
 - Installation: multiple improvements to path handling for portable and non-portable installations. By default scripts will always try to use only relative paths to the profile folder, so scripts will work without any change when exporting the profile to any other installation. This change obviously doesn't apply to already existing installations unless restoring defaults.
@@ -23,6 +27,7 @@
 - Helpers: updated helpers.
 - Helpers: general code cleanup on menus internal code. Please report any bug on extra separators or menu entries not working as expected.
 ### Removed
+- Files: removed references to files related to foobar v0.X or foo_playcount 2.x.
 ### Fixed
 - UI: '&' being displayed as '_' on tooltips.
 
