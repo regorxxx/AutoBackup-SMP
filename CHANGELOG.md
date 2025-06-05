@@ -12,12 +12,14 @@
 
 ## [Unreleased][]
 ### Added
+- Events: new file retention strategy based on file creation date. It will try now to conserve backups from previous years (10%), months (10%), weeks (20%) and days of current week (25%) and preferably rotate those created at current day. The percentage correspond to the amount of backups from such date range relative to the max number of backups. This will ensure that backups from previous dates are always available, even if foobar2000 has been running for many hours.
 - Files: added files at 'js_data\\helpers' to default files to backup.
 - Files: added foo_input_sacd and foo_input_dvda databases to default files to backup.
 - Files: added foobar v2 databases to default files to backup.
 - UI: toolbar tooltip now shows 'Shift + Win + R. Click' shortcut to open SMP/JSpliter panel menu (which works globally on any script and panel, at any position).
 - Readmes: Ctrl + L. Click on any entry within 'Add button' submenu on toolbar now opens directly their associated readme (without actually adding the button).
 ### Changed
+- Events: 'Always, since last autosave' condition to run backups now fires when no other condition related to playback is enabled even if no backup even fired before. Previously it only fired if at least other event was executed too.
 - Events: changed default backups max sixe to 5GB and number to 20.
 - Installation: added popup warnings when scripts are installed outside foobar2000 profile folder. These checks can be tweaked at globSettings.json.
 - Installation: script may now be installed at any path within the foobar profile folder, no longer limited to '[FOOBAR PROFILE FOLDER]\scripts\SMP\xxx-scripts\' folder. Obviously it may still be installed at such place, which may be preferred if updating an older version.
