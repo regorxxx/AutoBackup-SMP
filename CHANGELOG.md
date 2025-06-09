@@ -32,6 +32,7 @@
 - Files: removed references to files related to foobar v0.X or foo_playcount 2.x.
 ### Fixed
 - UI: '&' being displayed as '_' on tooltips.
+- UI: multiple workarounds for rounded rectangles not being painted properly or producing crashes (SMP limitation).
 
 ## [2.4.0] - 2024-10-09
 ### Added
