@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/06/25
+//01/08/25
 
 /* global menu_panelProperties:readable */
 include('..\\helpers\\helpers_xxx.js');
@@ -111,7 +111,7 @@ addButton({
 					}
 				});
 				{
-					const menuName = menu.newMenu('Interval settings...');
+					const menuName = menu.newMenu('Interval settings');
 					['iPlaying', 'iStop', 'iInterval', 'iStart', 'iTrack', 'iClose', 'sep', 'iTrackSave'].forEach((key) => {
 						if (menu.isSeparator(key)) { menu.newEntry({ menuName, entryText: key }); return; }
 						const value = this.buttonsProperties[key][1];
@@ -135,7 +135,7 @@ addButton({
 					});
 				}
 				_createSubMenuEditEntries(menu, void (0), {
-					subMenuName: 'Files and folders to backup...',
+					subMenuName: 'Files and folders to backup',
 					name: 'AutoBackup',
 					list: this.autoBackup.files,
 					defaults: JSON.parse(this.buttonsProperties.files[3]),
@@ -159,7 +159,7 @@ addButton({
 					}
 				});
 				{
-					const menuName = menu.newMenu('Other settings...');
+					const menuName = menu.newMenu('Other settings');
 					{
 						const value = this.buttonsProperties.outputPath[1];
 						const entryText = this.buttonsProperties.outputPath[0].replace(/[a-zA-Z]*\d*_*\d*\./, '') + '\t[' + value + ']';
@@ -174,7 +174,7 @@ addButton({
 						});
 					}
 					_createSubMenuEditEntries(menu, menuName, {
-						subMenuName: 'Backup file formatting...',
+						subMenuName: 'Backup file formatting',
 						name: 'AutoBackup',
 						list: this.autoBackup.backupFormat,
 						defaults: JSON.parse(this.buttonsProperties.backupFormat[3]),
