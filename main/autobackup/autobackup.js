@@ -1,5 +1,5 @@
 'use strict';
-//03/06/25
+//06/08/25
 
 /* exported AutoBackup */
 
@@ -170,7 +170,7 @@ function AutoBackup({
 			.sort((a, b) => b.created - a.created);
 		let totalFiles = iBackups > 0 ? files.length : null;
 		let totalSize = backupsMaxSize > 0 ? files.reduce((acc, curr) => acc + curr.size, 0) : null;
-		// Take out files from specific date rangs from rotation
+		// Take out files from specific date ranges from rotation
 		files = ['year', 'month', 'week', 'day'].reduce((acc, key) => this.popFilesByDateKey(acc, key), files);
 		// Delete by number
 		if (iBackups > 0) {

@@ -34,6 +34,7 @@
 ### Fixed
 - UI: '&' being displayed as '_' on tooltips.
 - UI: multiple workarounds for rounded rectangles not being painted properly or producing crashes (SMP limitation).
+- Fixed some misspelled terms on UI and variables (which also lead to some minor bugs).
 
 ## [2.4.0] - 2024-10-09
 ### Added
