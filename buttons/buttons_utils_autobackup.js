@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/08/25
+//07/08/25
 
 /* global menu_panelProperties:readable */
 include('..\\helpers\\helpers_xxx.js');
@@ -80,7 +80,7 @@ var newButtonsProperties = { // NOSONAR[global]
 			{ name: 'Replace T', regex: 'T', flag: 'g', replacer: '-' }
 		]), { func: isJSON }
 	],
-	bAsync: ['Aynchronous backup processing', true, { func: isBoolean }, true],
+	bAsync: ['Asynchronous backup processing', true, { func: isBoolean }, true],
 	active: ['AutoBackup activated', true, { func: isBoolean }, true],
 	bIconMode: ['Icon-only mode', false, { func: isBoolean }, false],
 	bStartActive: ['Always active on startup', true, { func: isBoolean }, true],
