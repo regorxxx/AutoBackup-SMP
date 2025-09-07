@@ -1,7 +1,7 @@
 ﻿'use strict';
-//07/08/25
+//07/09/25
 
-/* global menu_panelProperties:readable */
+/* global barProperties:readable */
 include('..\\helpers\\helpers_xxx.js');
 /* global globFonts:readable, MK_CONTROL:readable, VK_CONTROL:readable */
 include('..\\helpers\\buttons_xxx.js');
@@ -281,7 +281,7 @@ addButton({
 		},
 		description: function () {
 			const bCtrl = utils.IsKeyPressed(VK_CONTROL);
-			const bInfo = typeof menu_panelProperties === 'undefined' || menu_panelProperties.bTooltipInfo[1];
+			const bInfo = typeof barProperties === 'undefined' || barProperties.bTooltipInfo[1];
 			let info = 'AutoBackup foobar2000 config files:';
 			// Entries
 			const files = this.autoBackup.files;
