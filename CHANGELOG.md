@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [3.0.0](#300---2025-09-20)
 - [2.4.0](#240---2024-10-09)
 - [2.3.1](#231---2024-08-13)
 - [2.3.0](#230---2024-07-30)
@@ -11,6 +12,12 @@
 - [1.0.0](#100---2023-12-08)
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [3.0.0] - 2025-09-20
 ### Added
 - Events: new file retention strategy based on file creation date. It will try now to conserve backups from previous years (10%), months (10%), weeks (20%) and days of current week (25%) and preferably rotate those created at current day. The percentage correspond to the amount of backups from such date range relative to the max number of backups. This will ensure that backups from previous dates are always available, even if foobar2000 has been running for many hours.
 - Files: added files at 'js_data\\helpers' to default files to backup.
@@ -114,7 +121,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.4.0...HEAD
+[Unreleased]: https://github.com/regorxxx/Autobackup-SMP/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.4.0...v3.0.0
 [2.4.0]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.3.1...v2.4.0
 [2.3.1]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.3.0...v2.3.1
 [2.3.0]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.2.0...v2.3.0
