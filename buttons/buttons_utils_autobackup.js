@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/09/25
+//20/09/25
 
 /* global barProperties:readable */
 include('..\\helpers\\helpers_xxx.js');
@@ -24,7 +24,7 @@ include('..\\main\\autobackup\\autobackup.js');
 /* global AutoBackup:readable */
 
 var prefix = 'bak'; // NOSONAR[global]
-var version = '2.5.0'; // NOSONAR[global]
+var version = '3.0.0'; // NOSONAR[global]
 
 try { window.DefineScript('AutoBackup Button', { author: 'regorxxx', version, features: { drag_n_drop: false } }); } catch (e) { /* May be loaded along other buttons */ } // eslint-disable-line no-unused-vars
 
