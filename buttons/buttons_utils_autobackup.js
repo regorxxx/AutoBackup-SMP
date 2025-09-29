@@ -24,7 +24,7 @@ include('..\\main\\autobackup\\autobackup.js');
 /* global AutoBackup:readable */
 
 var prefix = 'bak'; // NOSONAR[global]
-var version = '3.0.0'; // NOSONAR[global]
+var version = '3.0.1'; // NOSONAR[global]
 
 try { window.DefineScript('AutoBackup Button', { author: 'regorxxx', version, features: { drag_n_drop: false } }); } catch (e) { /* May be loaded along other buttons */ } // eslint-disable-line no-unused-vars
 
