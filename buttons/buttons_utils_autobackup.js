@@ -1,9 +1,9 @@
 ﻿'use strict';
-//29/09/25
+//03/10/25
 
 /* global barProperties:readable */
 include('..\\helpers\\helpers_xxx.js');
-/* global globFonts:readable, MK_CONTROL:readable, VK_CONTROL:readable */
+/* global globFonts:readable, MK_CONTROL:readable, VK_CONTROL:readable, popup:readable */
 include('..\\helpers\\buttons_xxx.js');
 /* global getUniquePrefix:readable, buttonsBar:readable, addButton:readable, ThemedButton:readable, showButtonReadme:readable */
 include('..\\helpers\\menu_xxx.js');
@@ -11,9 +11,9 @@ include('..\\helpers\\menu_xxx.js');
 include('..\\helpers\\menu_xxx_extras.js');
 /* global _createSubMenuEditEntries:readable */
 include('..\\helpers\\helpers_xxx_prototypes.js');
-/* global isBoolean:readable, isInt:readable, isJSON:readable, isString:readable */
+/* global isBoolean:readable, isInt:readable, isJSON:readable, isString:readable, isStringWeak:readable, _b:readable */
 include('..\\helpers\\helpers_xxx_file.js');
-/* global _explorer:readable */
+/* global _explorer:readable, WshShell:readable */
 include('..\\helpers\\helpers_xxx_UI.js');
 /* global _gdiFont:readable, _gr:readable, _scale:readable, chars:readable */
 include('..\\helpers\\helpers_xxx_properties.js');
@@ -32,34 +32,34 @@ prefix = getUniquePrefix(prefix, ''); // Puts new ID before '_'
 
 var newButtonsProperties = { // NOSONAR[global]
 	iPlaying: ['While playing (every X min, 0 = off)', 60, { func: isInt }, 60],
-	iStop: ['When playback stops (after X min, 0 = off)', 5, { func: isInt }, 5],
-	iInterval: ['Always, since last autosave (every X min, 0 = off)', 30, { func: isInt }, 30],
+	iStop: ['When playback stops (after X min, 0 = off)', 5, { func: isInt }, 10],
+	iInterval: ['Always, since last autosave (every X min, 0 = off)', 300, { func: isInt }, 300],
 	iStart: ['On startup (after X min, 0 = off)', 5, { func: isInt }, 5],
 	iTrack: ['Every X tracks (0 = off)', 0, { func: isInt }, 0],
 	iClose: ['On Foobar2000 exit (after X secs, 0 = off)', 20, { func: isInt }, 20],
-	iTrackSave: ['[Save] every X tracks (0 = off)', 5, { func: isInt }, 5],
+	iTrackSave: ['[Save] every X tracks (0 = off)', 20, { func: isInt }, 20],
 	files: ['Files and Folders mask',
 		JSON.stringify([
 			// Foobar folders
-			{ name: 'Main config', path: 'configuration' },
-			{ name: 'Playlists', path: 'playlists*' },
-			{ name: 'Library', path: 'library*' },
-			{ name: 'Statistics V1', path: 'index-data' },
-			{ name: 'VST presets', path: 'vst-presets' },
-			{ name: 'DSP presets', path: 'dsp-presets' },
+			{ name: 'Main config', path: 'configuration', bCopy: true },
+			{ name: 'Playlists', path: 'playlists*', bCopy: true },
+			{ name: 'Library', path: 'library*', bCopy: true },
+			{ name: 'Statistics V1', path: 'index-data', bCopy: true },
+			{ name: 'VST presets', path: 'vst-presets', bCopy: true },
+			{ name: 'DSP presets', path: 'dsp-presets', bCopy: true },
 			// Foobar Files
-			{ name: 'Theme', path: 'theme.fth' },
-			{ name: 'Main config V2', path: 'config.sqlite' },
-			{ name: 'Main dsp V2', path: 'config.fb2k-dsp' },
-			{ name: 'Tags V2', path: 'metadb.sqlite' },
-			{ name: 'File Operations', path: 'FileOps-Presets*' },
-			{ name: 'Large Fields', path: 'LLargeFieldsConfig.txt' },
+			{ name: 'Theme', path: 'theme.fth', bCopy: true },
+			{ name: 'Main config V2', path: 'config.sqlite', bCopy: true },
+			{ name: 'Main dsp V2', path: 'config.fb2k-dsp', bCopy: true },
+			{ name: 'Tags V2', path: 'metadb.sqlite', bCopy: true },
+			{ name: 'File Operations', path: 'FileOps-Presets*', bCopy: true },
+			{ name: 'Large Fields', path: 'LargeFieldsConfig.txt' },
 			// Components
 			{ name: 'foo_input_dvda', path: 'dvda_metabase' },
 			{ name: 'foo_input_sacd', path: 'sacd_metabase' },
 			{ name: 'foo_upnp', path: 'foo_upnp*' },
 			// JS scripts
-			{ name: 'Playlist Organizer', path: 'pl_organizer.txt' },
+			{ name: 'Playlist Organizer', path: 'pl_organizer.txt', bCopy: true },
 			{ name: 'JS presets', path: 'js_data\\presets' },
 			{ name: 'JS helpers', path: 'js_data\\helpers' },
 			{ name: 'JS Buttons', path: 'js_data\\buttons_*' },
@@ -87,6 +87,7 @@ var newButtonsProperties = { // NOSONAR[global]
 	bHeadlessMode: ['Headless mode', false, { func: isBoolean }, false],
 	backupsMaxSize: ['Max size of backup files (MB)', 5000, { func: isInt }, 5000],
 	minDriveSize: ['Min free space on drive (MB)', 10000, { func: isInt }, 10000],
+	zipArgs: ['7za extra CMD arguments', '', { func: isStringWeak }, ''],
 };
 newButtonsProperties.files.push(newButtonsProperties.files[1]);
 newButtonsProperties.backupFormat.push(newButtonsProperties.backupFormat[1]);
@@ -145,10 +146,12 @@ addButton({
 								'string', '',
 								'Enter folder path relative to profile folder:\n' +
 								'Ex: js_data\\presets'
-								, 'AutoBackup', 'js_data\\presets', void (0), true
-							)
+								, 'AutoBackup: files', 'js_data\\presets', void (0), true
+							),
+							bCopy: false
 						};
 						if (!entry.path) { return; }
+						entry.bCopy = WshShell.Popup('Foobar2000 v2 may show errors accesing files while they are being compressed, due to file blocking restrictions. Creating a temporal copy may help in these cases, specially with critical files like databases.\n\nCopy selected files to temp folder before compressing?', 0, 'Autobackup: temporal copy', popup.question + popup.yes_no) === popup.yes;
 						return entry;
 					},
 					bNumbered: true,
@@ -241,6 +244,18 @@ addButton({
 						});
 					}
 					menu.newSeparator(menuName);
+					{
+						menu.newEntry({
+							menuName, entryText: '7za cmd extra arguments' + '\t' + _b(this.buttonsProperties.zipArgs[1].cut(5)), func: () => {
+								const input = Input.string('trimmed string', this.buttonsProperties.zipArgs[1], 'Enter 7za cmd extra arguments:\n(Check online help for info)\n\nCompression can be set with \'-mxX\'. Where X can be 0-9.\nTo set no compression (fastest processing), use \'-mx0\'', 'AutoBackup: 7za command line', this.buttonsProperties.zipArgs[3]);
+								if (input === null) { return; }
+								this.autoBackup.zipArgs = this.buttonsProperties.zipArgs[1] = input;
+								overwriteProperties(this.buttonsProperties);
+							}
+						});
+						menu.newCheckMenuLast(() => this.buttonsProperties.zipArgs[1].length !== 0);
+					}
+					menu.newSeparator(menuName);
 					['bAsync', 'sep', 'active', 'bStartActive'].forEach((key) => {
 						if (menu.isSeparator(key)) { menu.newEntry({ menuName, entryText: key }); return; }
 						const entryText = this.buttonsProperties[key][0].replace(/[a-zA-Z]*\d*_*\d*\./, '');
@@ -310,6 +325,7 @@ addButton({
 				iClose: Number(newButtonsProperties.iClose[1]),
 				iTrackSave: Number(newButtonsProperties.iTrackSave[1]),
 				minDriveSize: Number(newButtonsProperties.minDriveSize[1]) * 1024 * 1024,
+				zipArgs: newButtonsProperties.zipArgs[1]
 			})
 		},
 		onInit: function () {
