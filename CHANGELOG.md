@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [3.1.0](#310---2025-10-14)
 - [3.0.1](#301---2025-09-29)
 - [3.0.0](#300---2025-09-20)
 - [2.4.0](#240---2024-10-09)
@@ -13,6 +14,13 @@
 - [1.0.0](#100---2023-12-08)
 
 ## [Unreleased][]
+### Added
+### Changed
+
+### Removed
+### Fixed
+
+## [3.1.0] - 2025-10-14
 ### Added
 - Autobackup: added a flag to mark specific folders/files to be copied before creating the zipped backup file (with the copy, instead of the original one). This is mostly an internal change to be on the safe side with foobar2000 v2, since compressing a file seems to also block it and foobar2000 v2 seems to have problems in some cases in this situation. See [here](https://hydrogenaudio.org/index.php/topic,128527.0.html). Note defaults settings must be restored at the files and folders submenu to apply this flag.
 - Autobackup: added settings to add extra CMD arguments to 7za processing. For ex. to change the compression level to no compression, use '-mx0'. The full list of commands can be seen [here](https://7-zip.opensource.jp/chm/cmdline/commands/add.htm).
@@ -138,7 +146,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/Autobackup-SMP/compare/v3.0.1...HEAD
+[Unreleased]: https://github.com/regorxxx/Autobackup-SMP/compare/v3.1.0...HEAD
+[3.1.0]: https://github.com/regorxxx/Autobackup-SMP/compare/v3.0.1...v3.1.0
 [3.0.1]: https://github.com/regorxxx/Autobackup-SMP/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.4.0...v3.0.0
 [2.4.0]: https://github.com/regorxxx/Autobackup-SMP/compare/v2.3.1...v2.4.0
